@@ -12,11 +12,11 @@ class Migration_AlterJabatanDepartment extends CI_Migration
     {
         Capsule::schema()->table('jabatan', function ($table) {
             $table->bigInteger('department_id')->default(1);
-            $table->bigInteger('museum_id')->default(1);
+            $table->bigInteger('company_id')->default(1);
         });
 
         Capsule::schema()->table('jabatan_department_employee', function ($table) {
-            $table->bigInteger('museum_id')->default(1);
+            $table->bigInteger('company_id')->default(1);
         });
     }
 
