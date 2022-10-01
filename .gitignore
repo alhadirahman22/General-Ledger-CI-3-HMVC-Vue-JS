@@ -1,0 +1,21 @@
+# Folders #
+###########
+package-lock.json
+/node_modules
+/sessions
+/sessions/*
+app/logs/*
+.idea/
+.vscode/*
+.env.production
+.env.testing
+.env.development
+.docker/dbdata/*
+.docker/nginx/log/*
+***/.docker/nginx/log/
+app/vendor/*
+uploads/benda/*
+uploads/photo/*
+**/assets/images
+**/public/js
+/public

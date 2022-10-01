@@ -1,0 +1,16 @@
+/* .sidebar {
+    width: 200px !important;
+}
+
+.sidebar+.main-content {
+    margin-left: 200px !important;
+} */
+
+.select2 {
+    width: 100% !important;
+}
+
+.tags {
+    width: 100% !important;
+    min-height: 73px !important;
+}
