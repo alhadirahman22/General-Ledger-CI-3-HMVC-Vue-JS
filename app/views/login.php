@@ -43,7 +43,7 @@
 
 
                     <div style="text-align: center;">
-                      <img src="<?= base_url('assets/images/brand/logo4.png') ?>" style="width:70%;" />
+                      <img src="<?= base_url('assets/images/brand/LogoSanaknet.png') ?>" style="width:70%;" />
                     </div>
 
 
