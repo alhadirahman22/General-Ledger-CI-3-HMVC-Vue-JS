@@ -1,1 +1,0 @@
-<?php $lang['heading'] = 'Cerita';

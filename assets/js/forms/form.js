@@ -43,19 +43,12 @@ var config_validate = {
 
 
         } else {
-            // console.log('dataModule', dataModule);
-
-            // if (dataModule.filter_name == "table_filter_data_benda_model" && dataModule.action == 'edit') {
-            //     await loadFormEditAfter();
-            // }
-
+            e.preventDefault();
             if (confirm('Are you sure to edit ?')) {
                 App_template.loadingStart();
                 $(form).ajaxSubmit({
 
                     success: async function (data) {
-
-
 
                         try {
                             reValidationFormTab(data);
