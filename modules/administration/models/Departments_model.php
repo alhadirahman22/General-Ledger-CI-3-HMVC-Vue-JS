@@ -30,7 +30,7 @@ class Departments_model extends CI_Model
     function filter($filter = array())
     {
         $this->db
-            ->join('museums AS b', 'b.museum_id = a.museum_id', 'left');
+            ->join('company AS b', 'b.company_id = a.company_id', 'left');
 
         if ($filter) {
             $this->db->group_start();

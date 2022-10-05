@@ -12,7 +12,7 @@ class Migration_StrukturJabatanDepartment extends CI_Migration
         Capsule::schema()->create('jabatan', function ($table) {
             $table->bigIncrements('jabatan_id');
             $table->string('name', 100);
-            $table->integer('level');
+            $table->bigInteger('level_jabatan_id');
         });
 
         Capsule::schema()->create('jabatan_department_employee', function ($table) {

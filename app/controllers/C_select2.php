@@ -84,7 +84,7 @@ class C_select2 extends CI_Controller
 
         $filter = explode(',', $text);
 
-        $this->db->where('a.active', 1);
+        // $this->db->where('a.active', 1);
         if (count($filter) > 0) {
             $this->db->group_start();
             for ($i = 0; $i < count($filter); $i++) {

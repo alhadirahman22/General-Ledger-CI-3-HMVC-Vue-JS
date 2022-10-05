@@ -16,9 +16,10 @@ class Jabatan_model extends CI_Model
             $this->db->order_by($order['column'], $order['dir']);
         }
 
-        $this->db->select('a.*, b.name as NameDepartment , c.name as NameMuseum');
+        $this->db->select('a.*, b.name as NameDepartment , c.name as NameCompany,d.value');
         $this->db->join('departments as b', 'b.department_id = a.department_id');
-        $this->db->join('museums as c', 'c.museum_id = a.museum_id');
+        $this->db->join('company as c', 'c.company_id = a.company_id');
+        $this->db->join('level_jabatan as d', 'd.level_jabatan_id = a.level_jabatan_id');
 
         return $this->db->limit($length, $start)->get($this->table . ' AS a');
     }
@@ -27,7 +28,8 @@ class Jabatan_model extends CI_Model
     {
         $this->filter($filter);
         $this->db->join('departments as b', 'b.department_id = a.department_id');
-        $this->db->join('museums as c', 'c.museum_id = a.museum_id');
+        $this->db->join('company as c', 'c.company_id = a.company_id');
+        $this->db->join('level_jabatan as d', 'd.level_jabatan_id = a.level_jabatan_id');
         return $this->db->count_all_results($this->table . ' AS a');
     }
 
@@ -35,7 +37,6 @@ class Jabatan_model extends CI_Model
     {
         $this->db->where('a.deleted_at is NULL');
         $this->db->where('b.active', 1);
-        $this->db->where('c.active', 1);
         if ($filter) {
             $this->db->group_start();
 

@@ -1,7 +1,8 @@
 <?php
 
-use Repository\administration\DepartmentsRepository;
+use Modules\administration\repository\DepartmentsRepository;
 use Modules\administration\models\Jabatan_model_eloquent;
+use Modules\administration\models\LevelJabatan_model_eloquent;
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -23,9 +24,9 @@ class Jabatan extends CI_Controller
         $this->data['table'] = [
             'columns' => [
                 '0' => ['name' => 'a.name', 'title' => 'Nama', 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
-                '1' => ['name' => 'a.level', 'title' => 'Level', 'width' => '15%', 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
+                '1' => ['name' => 'd.value', 'title' => 'Level', 'width' => '15%', 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
                 '2' => ['name' => 'b.name', 'title' => 'Department', 'width' => '15%', 'filter' => ['type' => 'text'], 'class' => 'default-sort', 'sort' => 'asc'],
-                '3' => ['name' => 'c.name', 'title' => 'Museum', 'width' => '15%', 'filter' => ['type' => 'text'], 'class' => 'default-sort', 'sort' => 'asc'],
+                '3' => ['name' => 'c.name', 'title' => 'Company', 'width' => '15%', 'filter' => ['type' => 'text'], 'class' => 'default-sort', 'sort' => 'asc'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
         ];
@@ -96,9 +97,9 @@ class Jabatan extends CI_Controller
 
                 $output['data'][] = array(
                     $data['name'],
-                    $data['level'],
+                    $data['value'],
                     $data['NameDepartment'],
-                    $data['NameMuseum'],
+                    $data['NameCompany'],
                     '<div class="btn-group ' . $showBtnAction . '">
                     <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false">
                         <i class="fa fa-pencil"></i>
@@ -151,13 +152,14 @@ class Jabatan extends CI_Controller
                 'form_control_class' => 'col-md-4',
             ),
             array(
-                'id' => 'level',
-                'value' => ($data) ? $data->level : '',
+                'id' => 'level_jabatan_id',
+                'value' => ($data) ? $data->level_jabatan_id : '',
                 'label' => 'Level',
                 'required' => 'true',
+                'type' => 'dropdown',
                 'form_control_class' => 'col-md-4',
-                'type' => 'number',
-                'min' => '1',
+                'class' => 'select2-nonserverside',
+                'options' => $this->getLevel(),
             ),
             array(
                 'id' => 'department_id',
@@ -185,6 +187,18 @@ class Jabatan extends CI_Controller
         $this->load->view('default/form', $this->data);
     }
 
+    private function getLevel()
+    {
+        $data = LevelJabatan_model_eloquent::all();
+
+        $op = [];
+        for ($i = 0; $i < count($data); $i++) {
+            $op[$data[$i]->level_jabatan_id] = $data[$i]->value . ' - ' . $data[$i]->name;
+        }
+
+        return $op;
+    }
+
     private function getDepartmetnt()
     {
         $arrFilter = [];
@@ -193,7 +207,7 @@ class Jabatan extends CI_Controller
 
         $op = [];
         for ($i = 0; $i < count($data); $i++) {
-            $op[$data[$i]['department_id']] = $data[$i]['museum']['name'] . ' - ' . $data[$i]['name'];
+            $op[$data[$i]['department_id']] = $data[$i]['company']['name'] . ' - ' . $data[$i]['name'];
         }
 
         return $op;
@@ -213,7 +227,7 @@ class Jabatan extends CI_Controller
                 'rules' => 'required'
             ),
             array(
-                'field' => 'level',
+                'field' => 'level_jabatan_id',
                 'label' => 'Level',
                 'rules' => 'required'
             ),
@@ -226,7 +240,7 @@ class Jabatan extends CI_Controller
         $this->form_validation->set_rules($form_validation_arr);
 
         if ($this->form_validation->run() === true) {
-            $data['museum_id'] = $this->DepartmentsRepository->getMuseumID($data['department_id']);
+            $data['company_id'] = $this->DepartmentsRepository->getCompanyID($data['department_id']);
             do {
                 if (!$data[$this->table_id_key]) {
                     $data['created_at'] =  Date('Y-m-d H:i:s');

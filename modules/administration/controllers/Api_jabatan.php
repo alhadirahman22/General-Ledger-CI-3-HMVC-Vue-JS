@@ -1,6 +1,6 @@
 <?php
 
-use Repository\administration\JabatanRepository;
+use Modules\administration\repository\JabatanRepository;
 
 defined('BASEPATH') or exit('No direct script access allowed');
 

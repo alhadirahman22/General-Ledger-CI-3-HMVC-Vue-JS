@@ -2,7 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use Repository\administration\DepartmentsRepository;
+use Modules\administration\repository\DepartmentsRepository;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 

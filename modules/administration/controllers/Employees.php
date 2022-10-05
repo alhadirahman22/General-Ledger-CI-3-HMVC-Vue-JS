@@ -2,7 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use Repository\administration\DepartmentsRepository;
+use Modules\administration\repository\DepartmentsRepository;
 use  Modules\administration\models\Employee_model_eloquent;
 
 class Employees extends CI_Controller
@@ -278,9 +278,9 @@ class Employees extends CI_Controller
                     $this->db->where('employee_id', $employee_id)->delete('jabatan_department_employee');
                     for ($i = 0; $i < count($jabatan_department_employee); $i++) {
                         $ds = $jabatan_department_employee[$i];
-                        $museum_id = $this->DepartmentsRepository->getMuseumID($ds['department_id']);
+                        $company_id = $this->DepartmentsRepository->getCompanyID($ds['department_id']);
                         $ds['employee_id'] = $employee_id;
-                        $ds['museum_id'] = $museum_id;
+                        $ds['company_id'] = $company_id;
                         $this->db->insert('jabatan_department_employee', $ds);
                     }
                 }

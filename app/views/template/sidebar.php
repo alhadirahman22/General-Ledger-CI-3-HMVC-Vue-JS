@@ -145,7 +145,7 @@
 							<b class="arrow"></b>
 						</li>
 					<?php endif ?>
-					<?php if ($this->aauth->is_allowed('master/negara')) : ?>
+					<!-- <?php if ($this->aauth->is_allowed('master/negara')) : ?>
 						<li data-name="Negara" class="">
 							<a href="<?= base_url('master/negara'); ?>">
 								<i class="menu-icon fa fa-caret-right"></i>
@@ -154,9 +154,9 @@
 
 							<b class="arrow"></b>
 						</li>
-					<?php endif ?>
+					<?php endif ?> -->
 
-					<?php if ($this->aauth->is_allowed('master/currency')) : ?>
+					<!-- <?php if ($this->aauth->is_allowed('master/currency')) : ?>
 						<li data-name="Currency" class="">
 							<a href="<?= base_url('master/currency'); ?>">
 								<i class="menu-icon fa fa-caret-right"></i>
@@ -165,7 +165,7 @@
 
 							<b class="arrow"></b>
 						</li>
-					<?php endif ?>
+					<?php endif ?> -->
 				</ul>
 
 			</li>

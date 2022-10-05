@@ -19,7 +19,7 @@ class Departments extends CI_Controller
 
         $this->data['table'] = [
             'columns' => [
-                '0' => ['name' => 'b.name', 'title' => 'Museum', 'width' => '15%', 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
+                '0' => ['name' => 'b.name', 'title' => 'Company', 'width' => '15%', 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
                 '1' => ['name' => 'a.name', 'title' => 'Departemen', 'filter' => ['type' => 'text'], 'class' => 'default-sort', 'sort' => 'asc'],
                 '2' => ['name' => 'a.descriptions', 'title' => 'Deskripsi', 'filter' => ['type' => 'text'], 'class' => 'default-sort', 'sort' => 'asc'],
                 '3' => ['name' => 'a.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
@@ -130,16 +130,16 @@ class Departments extends CI_Controller
                 'value' => ($data) ? $id : '',
             ),
             array(
-                'id' => 'museum_id',
-                'label' => 'Museum',
+                'id' => 'company_id',
+                'label' => 'Company',
                 'required' => 'true',
                 'type' => 'dropdown',
                 'form_control_class' => 'col-md-4',
                 'class' => 'select2-serverside',
-                'data-table' => 'museums',
-                'data-id' => 'museum_id',
+                'data-table' => 'company',
+                'data-id' => 'company_id',
                 'data-text' => 'name',
-                'data-selected' => ($data) ? $data->museum_id : '',
+                'data-selected' => ($data) ? $data->company_id : '',
             ),
             array(
                 'id' => 'name',
@@ -187,8 +187,8 @@ class Departments extends CI_Controller
                 'rules' => 'required'
             ),
             array(
-                'field' => 'museum_id',
-                'label' => 'museum_id',
+                'field' => 'company_id',
+                'label' => 'Company',
                 'rules' => 'required'
             )
         );

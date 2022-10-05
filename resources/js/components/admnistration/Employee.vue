@@ -84,7 +84,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-xs-12">
           <div class="pull-right" style="margin-bottom: 10px">
             <button
               class="btn btn-sm btn-primary"
@@ -243,7 +243,7 @@ export default {
         for (let index = 0; index < dataRest.length; index++) {
           const temp = {
             id: dataRest[index].department_id,
-            text: dataRest[index].museum.name + " - " + dataRest[index].name,
+            text: dataRest[index].company.name + " - " + dataRest[index].name,
           };
           myOptions.push(temp);
         }

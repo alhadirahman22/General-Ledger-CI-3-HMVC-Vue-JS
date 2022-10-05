@@ -242,9 +242,12 @@ class Roles extends CI_Controller
         }
 
         $options = '';
-        foreach ($permissions->result() as $permission) {
-            $options = $options . '<option value="' . $permission->id . '" ' . ($data ? in_array($permission->id, $perm_exists) ? 'selected="selected"' : '' : '') . '>' . $permission->definition . '</option>';
+        if ($permissions) {
+            foreach ($permissions->result() as $permission) {
+                $options = $options . '<option value="' . $permission->id . '" ' . ($data ? in_array($permission->id, $perm_exists) ? 'selected="selected"' : '' : '') . '>' . $permission->definition . '</option>';
+            }
         }
+
 
         $html = '<div class="row">
         <div class="col-sm-12">

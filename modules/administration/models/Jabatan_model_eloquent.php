@@ -4,10 +4,10 @@ namespace Modules\administration\models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use Modules\administration\models\Museum_model_eloquent;
+use Modules\administration\models\Company_model_eloquent;
 use Modules\administration\models\Employee_model_eloquent;
 use Modules\administration\models\Departments_model_eloquent;
-
+use Modules\administration\models\LevelJabatan_model_eloquent;
 
 
 class Jabatan_model_eloquent extends Eloquent
@@ -35,8 +35,13 @@ class Jabatan_model_eloquent extends Eloquent
         return $this->belongsTo(Departments_model_eloquent::class, 'department_id', 'department_id');
     }
 
-    public function museum()
+    public function getLevel()
     {
-        return $this->belongsTo(Museum_model_eloquent::class, 'museum_id', 'museum_id');
+        return $this->belongsTo(LevelJabatan_model_eloquent::class, 'level_jabatan_id', 'level_jabatan_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company_model_eloquent::class, 'company_id', 'company_id');
     }
 }
