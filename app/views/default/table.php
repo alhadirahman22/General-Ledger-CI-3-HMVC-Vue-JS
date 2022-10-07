@@ -15,12 +15,15 @@
             echo '<input value="' . $filter_2['start'] . '" id="filter_2_start"> <input value="' . $filter_2['length'] . '" id="filter_2_length"> <input value="' . $filter_2['page'] . '" id="filter_2_page">';
         } ?>
     </div>
-    <table class="table table-striped table-bordered table-hover" id="table_default" data-filter-name="<?= $filter_name ?>" data-url="<?php echo $table['url']; ?>">
+    <table class="table table-striped table-bordered table-hover display nowrap" id="table_default" data-filter-name="<?= $filter_name ?>" data-url="<?php echo $table['url']; ?>">
         <thead>
             <tr class="column">
                 <?php
                 foreach ($table['columns'] as $key => $column) {
-                    echo '<th style="' . (isset($column['width']) ? 'width:' . $column['width'] : '') . '" ' . (isset($column['id']) ? 'id="' . $column['id'] . '"' : '') . ' class="' . (isset($column['class']) ? $column['class'] : '') . '" data-data="' . $key . '" data-sort="' . (isset($column['sort']) ? $column['sort'] : '') . '">' . $column['title'] . '</th>';
+                    echo '<th style="' . (isset($column['width']) ? 'width:' . $column['width'] : '') . '" ' . (isset($column['id']) ? 'id="' . $column['id'] . '"' : '') . ' class="' . (isset($column['class']) ? $column['class'] : '') . '" data-data="' . $key . '" data-sort="' . (isset($column['sort']) ? $column['sort'] : '') . '"
+                    ' . (isset($column['datapriority']) ? 'data-priority="' . $column['datapriority'] . '"' : '') . '
+                     
+                    >' . $column['title'] . '</th>';
                 }
                 ?>
             </tr>

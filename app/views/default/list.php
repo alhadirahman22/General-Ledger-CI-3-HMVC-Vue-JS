@@ -14,7 +14,7 @@
         <?php endif ?>
     </div>
 
-    <div class="col-md-12">
+    <div class="col-xs-12">
 
         <?php if (isset($filter_custom)) { ?>
 

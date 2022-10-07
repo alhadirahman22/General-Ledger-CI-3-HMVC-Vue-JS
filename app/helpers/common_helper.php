@@ -189,7 +189,17 @@ if (!function_exists('get_jwt_decryption')) {
         if ($token) {
 
             $jwt_key = settings('jwt_key');
-            $decoded = JWT::decode($token, $jwt_key, array('HS256'));
+            if (settings('env_debug') == 'development') {
+                $decoded = JWT::decode($token, $jwt_key, array('HS256'));
+            } else {
+                try {
+                    $decoded = JWT::decode($token, $jwt_key, array('HS256'));
+                } catch (\Throwable $th) {
+                    redirect($_SERVER['HTTP_REFERER']);
+                }
+            }
+
+
 
             return $decoded;
         }
@@ -291,9 +301,9 @@ if (!function_exists('settings')) {
 //         if ($number) {
 //             // 1 = januari
 //             $arr_month = [
-                // 'January', 'February', 'March', 'April',
-                // 'May', 'June', 'July', 'August', 'September', 'October',
-                // 'November', 'December'
+// 'January', 'February', 'March', 'April',
+// 'May', 'June', 'July', 'August', 'September', 'October',
+// 'November', 'December'
 //             ];
 
 //             return $arr_month[number - 1];

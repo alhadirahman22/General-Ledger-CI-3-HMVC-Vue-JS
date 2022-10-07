@@ -14,3 +14,19 @@
     width: 100% !important;
     min-height: 73px !important;
 }
+
+.table-responsive {
+    background-color: #eff3f8 !important;
+}
+
+.table tbody tr td .dtr-data>div.action-buttons {
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    table.dataTable>tbody>tr.child ul.dropdown-menu {
+        position: static;
+        display: none;
+        float: none;
+    }
+}

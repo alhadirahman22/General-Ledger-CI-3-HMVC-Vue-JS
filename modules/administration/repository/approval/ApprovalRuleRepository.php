@@ -117,6 +117,12 @@ class ApprovalRuleRepository
         if (count($get_data['dataRaw']) > 0) {
             $dataRaw = $get_data['dataRaw']->toArray();
             for ($i = 0; $i < count($dataRaw); $i++) {
+
+                $payload = array(
+                    'id' => $dataRaw[$i]['approval_rule_id']
+                );
+                $encry = get_jwt_encryption($payload);
+
                 $output['data'][] = array(
                     $dataRaw[$i]['name'],
                     $this->type_approval[$dataRaw[$i]['type_approval']],
@@ -124,10 +130,10 @@ class ApprovalRuleRepository
                     $this->CI->m_master->get_username_by($dataRaw[$i]['created_by']),
                     get_date_time($dataRaw[$i]['updated_at']),
                     $this->CI->m_master->get_username_by($dataRaw[$i]['updated_by']),
-                    '<div class = "hidden-sm hidden-xs action-buttons">' .
-                        ($this->CI->aauth->is_allowed($this->CI->perm . '/add') ? '<a class="' . lang('button_view_class') . '" title="' . lang('view') . '" href="' . $this->CI->data['module_url'] . 'form/' . $dataRaw[$i]['approval_rule_id'] . '">' . lang('button_view') . '</a>' : '') .
+                    '<div class = " action-buttons">' .
+                        ($this->CI->aauth->is_allowed($this->CI->perm . '/add') ? '<a class="' . lang('button_view_class') . '" title="' . lang('view') . '" href="' . $this->CI->data['module_url'] . 'form/' . $encry . '">' . lang('button_view') . '</a>' : '') .
                         '&nbsp  ' .
-                        ($this->CI->aauth->is_allowed($this->CI->perm . '/delete') ? '<a tabindex="-1" title="' . lang('delete') . '" class="' . lang('button_delete_class') . ' delete_row_default" href="' . $this->CI->data['module_url'] . 'delete/' . $dataRaw[$i]['approval_rule_id'] . '">' . lang('button_delete') . '</a>' : '') .
+                        ($this->CI->aauth->is_allowed($this->CI->perm . '/delete') ? '<a tabindex="-1" title="' . lang('delete') . '" class="' . lang('button_delete_class') . ' delete_row_default" href="' . $this->CI->data['module_url'] . 'delete/' . $encry . '">' . lang('button_delete') . '</a>' : '') .
                         '</div>'
                 );
             }

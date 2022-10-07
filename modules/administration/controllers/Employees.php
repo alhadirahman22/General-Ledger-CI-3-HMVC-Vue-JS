@@ -86,7 +86,7 @@ class Employees extends CI_Controller
                     $data['gender'],
                     $data['email'],
                     $data['no_hp'],
-                    '<div class="btn-group ' . $showBtnAction . '">
+                    '<div class="btn-group ' . $showBtnAction . '" style="z-index: auto">
                     <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false">
                         <i class="fa fa-pencil"></i>
                         <span class="ace-icon fa fa-caret-down icon-on-right"></span>
@@ -106,91 +106,6 @@ class Employees extends CI_Controller
         echo json_encode($output);
     }
 
-    // public function form($token = '')
-    // {
-    //     $data = array();
-    //     if ($token) {
-    //         $dataToken = get_jwt_decryption($token);
-    //         $id = $dataToken->id;
-    //         $this->aauth->control($this->perm . '/edit');
-    //         $data = $this->m_master->get($this->table, array($this->table_id_key => $id));
-    //         if (!$data) {
-    //             show_404();
-    //             exit();
-    //         }
-    //     } else {
-    //         $this->aauth->control($this->perm . '/add');
-    //     }
-
-    //     $this->load->library('form_builder');
-
-    //     $nip = ($data) ? array(
-    //         'id' => 'nip',
-    //         'value' => ($data) ? $data->nip : '',
-    //         'label' => 'NIP',
-    //         'readonly' => 'true',
-    //         'form_control_class' => 'col-md-4',
-    //     ) : array(
-    //         'id' => 'nip',
-    //         'value' => ($data) ? $data->nip : '',
-    //         'label' => 'NIP',
-    //         'required' => 'true',
-    //         'form_control_class' => 'col-md-4',
-    //     );
-
-    //     $form = [
-    //         array(
-    //             'id' => $this->table_id_key,
-    //             'type' => 'hidden',
-    //             'value' => ($data) ? $id : '',
-    //         ),
-    //         $nip,
-    //         array(
-    //             'id' => 'name',
-    //             'value' => ($data) ? $data->name : '',
-    //             'label' => 'Nama',
-    //             'required' => 'true',
-    //             'form_control_class' => 'col-md-4',
-    //         ),
-    //         array(
-    //             'id' => 'email',
-    //             'value' => ($data) ? $data->email : '',
-    //             'label' => 'Email',
-    //             'type' => 'email',
-    //             'form_control_class' => 'col-md-4',
-    //         ),
-    //         array(
-    //             'id' => 'no_hp',
-    //             'value' => ($data) ? $data->no_hp : '',
-    //             'label' => 'No HO',
-    //             'type' => 'number',
-    //             'form_control_class' => 'col-md-4',
-    //         ),
-    //         array(
-    //             'id' => 'gender',
-    //             'value' => ($data) ? $data->gender : '',
-    //             'label' => 'Gender',
-    //             'required' => 'true',
-    //             'type' => 'dropdown',
-    //             'form_control_class' => 'col-md-4',
-    //             'class' => 'select2-nonserverside',
-    //             'options' => ['male' => 'Laki - Laki', 'female' => 'Perempuan'],
-    //         ),
-    //     ];
-
-    //     $this->data['form'] = [
-    //         'action' => $this->data['module_url'] . 'save',
-    //         'build' => $this->form_builder->build_form_horizontal($form),
-    //         'class' => '',
-    //     ];
-
-    //     $this->data['data'] = $data;
-
-    //     $this->template->_init();
-    //     $this->template->form();
-    //     $this->output->set_title(($this->data['data'] ? lang('edit') : lang('add')) . ' ' . lang('heading'));
-    //     $this->load->view('default/form', $this->data);
-    // }
 
     public function form($token = '')
     {

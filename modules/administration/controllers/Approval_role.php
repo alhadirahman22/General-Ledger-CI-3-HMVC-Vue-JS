@@ -28,15 +28,15 @@ class Approval_role extends CI_Controller
             'columns' => [
                 '0' => ['name' => 'name', 'title' => 'Name', 'class' => 'default-sort', 'sort' => 'asc', 'filter' => ['type' => 'text']],
                 '1' => ['name' => 'type_approval', 'title' => 'Type Approval', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', '1' => 'Series', '2' => 'Paralel']], 'class' => 'default-sort', 'sort' => 'asc'],
-                '2' => ['name' => 'a.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
-                '3' => ['name' => 'a.created_by', 'title' => lang('created_by'), 'filter' => false, 'class' => 'no-sort', 'sort' => 'asc'],
-                '4' => ['name' => 'a.updated_at', 'title' => lang('updated_at'), 'filter' => false, 'class' => 'default-sort', 'sort' => 'asc'],
-                '5' => ['name' => 'a.updated_by', 'title' => lang('updated_by'), 'filter' => false, 'class' => 'no-sort', 'sort' => 'asc'],
+                '2' => ['name' => 'a.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'no-sort'],
+                '3' => ['name' => 'a.created_by', 'title' => lang('created_by'), 'filter' => false, 'class' => 'no-sort'],
+                '4' => ['name' => 'a.updated_at', 'title' => lang('updated_at'), 'filter' => false, 'class' => 'no-sort'],
+                '5' => ['name' => 'a.updated_by', 'title' => lang('updated_by'), 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
         ];
         if ($this->aauth->is_allowed($this->perm . '/edit') || ($this->aauth->is_allowed($this->perm . '/delete'))) {
-            $this->data['table']['columns']['6'] = ['name' => 'id', 'title' => '', 'class' => 'no-sort text-center', 'width' => '10%', 'filter' => ['type' => 'action']];
+            $this->data['table']['columns']['6'] = ['name' => 'id', 'title' => 'Action', 'class' => 'no-sort text-center', 'width' => '10%', 'filter' => ['type' => 'action']];
         }
         $this->data['filter_name'] = 'table_filter_setting_approval_role';
         $this->table = 'approval_rule';

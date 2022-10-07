@@ -177,9 +177,11 @@ class Template
         // $this->ci->load->js('assets/js/tables/datatables/datatables.min.js');
         // $this->ci->load->js('assets/js/tables/table.js');
 
+        $this->ci->load->css('https://cdn.datatables.net/responsive/1.0.7/css/responsive.dataTables.min.css');
         $this->ci->load->js('assets/js/jquery.dataTables.min.js');
         $this->ci->load->js('assets/js/jquery.dataTables.bootstrap.min.js');
         $this->ci->load->js('assets/js/tables/table.js');
+        $this->ci->load->js('https://cdn.datatables.net/responsive/1.0.7/js/dataTables.responsive.min.js');
     }
 
     public function form($load_form = true)

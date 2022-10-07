@@ -3,11 +3,12 @@ class Class_template_table_default {
         let filter_2_length = $('#filter_2_length').val();
         this.param = [];
         this.param.table_config = {
-            responsive: {
-                details: {
-                    type: 'column'
-                }
-            },
+            // responsive: {
+            //     details: {
+            //         type: 'column'
+            //     }
+            // },
+            responsive: true,
             processing: true,
             serverSide: true,
             lengthMenu: [
@@ -46,31 +47,32 @@ class Class_template_table_default {
                 },
             },
             autoWidth: false,
-            columnDefs: [{
-                orderable: false,
-                targets: 'no-sort'
-            }, {
-                className: 'text-center',
-                targets: 'text-center'
-            }, {
-                className: 'text-right',
-                targets: 'text-right'
-            }, {
-                className: 'no-padding',
-                targets: 'no-padding'
-            }, {
-                className: 'td-no-padding',
-                targets: 'td-no-padding'
-            }, {
-                className: 'th-no-padding',
-                targets: 'th-no-padding'
-            }, {
-                className: 'td-image',
-                targets: 'image'
-            }, {
-                visible: false,
-                targets: 'hide'
-            }],
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: 'no-sort'
+                }, {
+                    className: 'text-center',
+                    targets: 'text-center'
+                }, {
+                    className: 'text-right',
+                    targets: 'text-right'
+                }, {
+                    className: 'no-padding',
+                    targets: 'no-padding'
+                }, {
+                    className: 'td-no-padding',
+                    targets: 'td-no-padding'
+                }, {
+                    className: 'th-no-padding',
+                    targets: 'th-no-padding'
+                }, {
+                    className: 'td-image',
+                    targets: 'image'
+                }, {
+                    visible: false,
+                    targets: 'hide'
+                }],
             order: [
                 [$('#table_default th.default-sort').index(), $('#table_default th.default-sort').attr('data-sort')]
             ],
