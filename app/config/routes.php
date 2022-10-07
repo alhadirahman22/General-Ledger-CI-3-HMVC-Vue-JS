@@ -21,6 +21,12 @@ $route['administration/user_management/(:any)/(:any)'] = 'administration/$1/$2';
 $route['administration/user_management/(:any)/(:any)/(:any)'] = 'administration/$1/$2/$3';
 
 
+// approval
+$route['administration/approval/(:any)'] = 'administration/$1';
+$route['administration/approval/(:any)/(:any)'] = 'administration/$1/$2';
+$route['administration/approval/(:any)/(:any)/(:any)'] = 'administration/$1/$2/$3';
+
+
 // master
 // $route['master/(:any)'] = 'master/$1';
 // $route['master/(:any)/(:any)'] = 'master/$1/$2';

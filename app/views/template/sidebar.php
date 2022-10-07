@@ -49,6 +49,45 @@
 						</li>
 					<?php endif ?>
 
+					<?php if ($this->aauth->is_allowed('administration/approval')) : ?>
+						<li data-name="Approval" class="">
+							<a href="#" class="dropdown-toggle">
+								<i class="menu-icon fa fa-caret-right"></i>
+
+								Approval
+								<b class="arrow fa fa-angle-down"></b>
+							</a>
+
+							<b class="arrow"></b>
+
+							<ul class="submenu">
+
+								<?php if ($this->aauth->is_allowed('administration/approval/approval_role')) : ?>
+									<li data-name="Approval_role" class="">
+										<a href="<?= base_url('administration/approval/Approval_role'); ?>">
+											<i class="menu-icon fa fa-leaf green"></i>
+											Approval Role
+										</a>
+
+										<b class="arrow"></b>
+									</li>
+								<?php endif ?>
+
+								<?php if ($this->aauth->is_allowed('administration/approval/approval_settings')) : ?>
+									<li data-name="Approval_settings" class="">
+										<a href="<?= base_url('administration/approval/Approval_settings'); ?>">
+											<i class="menu-icon fa fa-leaf green"></i>
+											Approval Settings
+										</a>
+
+										<b class="arrow"></b>
+									</li>
+								<?php endif ?>
+
+							</ul>
+						</li>
+					<?php endif ?>
+
 					<?php if ($this->aauth->is_allowed('administration/user_management')) : ?>
 						<li data-name="User_management" class="">
 							<a href="#" class="dropdown-toggle">
