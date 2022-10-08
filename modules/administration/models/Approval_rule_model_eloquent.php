@@ -22,7 +22,7 @@ class Approval_rule_model_eloquent extends Eloquent
         return $this->hasMany(Approval_rule_config_model_eloquent::class, 'approval_rule_id', 'approval_rule_id');
     }
 
-    public function assdept()
+    public function tagging_department()
     {
         return $this->belongsToMany(Departments_model_eloquent::class, 'approval_rule_department', 'approval_rule_id', 'department_id')
             ->withPivot(['type_approval', 'approval_rule_department_id'])

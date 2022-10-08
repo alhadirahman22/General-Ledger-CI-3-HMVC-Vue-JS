@@ -19,16 +19,9 @@ class Api_department extends CI_Controller
 
     public function fetch($active = 1)
     {
-        $token = $this->input->post('token');
-        $arrFilter = $this->m_master->decode_token($token);
+        $arrFilter = ['company_id' =>  1];
         $arrFilter['active'] = $active;
-
-        // Capsule::connection()->enableQueryLog();
         $data = $this->DepartmentsRepository->get($arrFilter);
-        // $queries = Capsule::getQueryLog();
-        // print_r($queries);
-        // die();
-
         echo json_encode([
             'success' => true,
             'data' => $data

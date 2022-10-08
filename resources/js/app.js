@@ -20,16 +20,16 @@ const routes = [
     { path: '/' }
 ]
 var router = new VueRouter({
-        routes: routes,
-        mode: 'history'
-    })
-    /**
-     * The following block of code may be used to automatically register your
-     * Vue components. It will recursively scan this directory for the Vue
-     * components and automatically register them with their "basename".
-     *
-     * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
-     */
+    routes: routes,
+    mode: 'history'
+})
+/**
+ * The following block of code may be used to automatically register your
+ * Vue components. It will recursively scan this directory for the Vue
+ * components and automatically register them with their "basename".
+ *
+ * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
+ */
 
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
@@ -39,14 +39,10 @@ Vue.config.productionTip = false
 
 
 Vue.component('dashboard-test', require('./components/dashboard/Test.vue').default);
-Vue.component('master-klasifikasi-department-form', require('./components/master/klasifikasi_department/Form.vue').default);
 Vue.component('widget-form', require('./components/WidgetForm.vue').default);
-Vue.component('mutasi-form', require('./components/mutasi/MutasiForm.vue').default);
-Vue.component('mutasi-form-multi', require('./components/mutasi/MutasiFormMultiBenda.vue').default);
-Vue.component('management-persetujuan', require('./components/mutasi/ManagementPersetujuanForm.vue').default);
 Vue.component('adm-employee', require('./components/admnistration/Employee.vue').default);
-Vue.component('formmutasibenda', require('./components/mutasi/FormMutasiBenda.vue').default);
 Vue.component('clear-log', require('./components/admnistration/auditTrails/clearLog.vue').default);
+Vue.component('approval-settings', require('./components/admnistration/approval/ApprovalSettings.vue').default);
 
 
 // Main Component

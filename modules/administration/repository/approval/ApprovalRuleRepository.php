@@ -15,6 +15,8 @@ class ApprovalRuleRepository
     public function __construct()
     {
         $this->CI = &get_instance();
+        $this->table_id_key = 'approval_rule' . '_id';
+        $this->table = 'approval_rule';
     }
     public function findByID($approval_rule_id)
     {
@@ -141,5 +143,21 @@ class ApprovalRuleRepository
         $output['draw'] = $draw++;
 
         return $output;
+    }
+
+    public function save($data)
+    {
+        if (!$data[$this->table_id_key]) {
+            $data['created_at'] =  Date('Y-m-d H:i:s');
+            $data['created_by'] =  $this->CI->data['user']->id;
+            $this->CI->db->insert($this->table, $data);
+        } else {
+            $data['updated_at'] =  Date('Y-m-d H:i:s');
+            $data['updated_by'] =  $this->CI->data['user']->id;
+            $this->CI->db->where($this->table_id_key, $data[$this->table_id_key]);
+            $this->CI->db->update($this->table, $data);
+        }
+
+        return true;
     }
 }

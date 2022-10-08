@@ -2,6 +2,9 @@
 
 use Modules\administration\repository\approval\ApprovalRuleRepository;
 use Modules\administration\midlleware\Approval_role_midlleware;
+use Modules\administration\models\Approval_rule_model_eloquent;
+
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 defined('BASEPATH') or exit('No direct script access allowed!');
 
@@ -28,10 +31,10 @@ class Approval_role extends CI_Controller
             'columns' => [
                 '0' => ['name' => 'name', 'title' => 'Name', 'class' => 'default-sort', 'sort' => 'asc', 'filter' => ['type' => 'text']],
                 '1' => ['name' => 'type_approval', 'title' => 'Type Approval', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', '1' => 'Series', '2' => 'Paralel']], 'class' => 'default-sort', 'sort' => 'asc'],
-                '2' => ['name' => 'a.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'no-sort'],
-                '3' => ['name' => 'a.created_by', 'title' => lang('created_by'), 'filter' => false, 'class' => 'no-sort'],
-                '4' => ['name' => 'a.updated_at', 'title' => lang('updated_at'), 'filter' => false, 'class' => 'no-sort'],
-                '5' => ['name' => 'a.updated_by', 'title' => lang('updated_by'), 'filter' => false, 'class' => 'no-sort'],
+                '2' => ['name' => 'created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'no-sort'],
+                '3' => ['name' => 'created_by', 'title' => lang('created_by'), 'filter' => false, 'class' => 'no-sort'],
+                '4' => ['name' => 'updated_at', 'title' => lang('updated_at'), 'filter' => false, 'class' => 'no-sort'],
+                '5' => ['name' => 'updated_by', 'title' => lang('updated_by'), 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
         ];
@@ -111,16 +114,7 @@ class Approval_role extends CI_Controller
         $validation = $this->midlleware->validation();
 
         if ($validation['status'] == 'success') {
-            if (!$data[$this->table_id_key]) {
-                $data['created_at'] =  Date('Y-m-d H:i:s');
-                $data['created_by'] =  $this->data['user']->id;
-                $this->db->insert($this->table, $data);
-            } else {
-                $data['updated_at'] =  Date('Y-m-d H:i:s');
-                $data['updated_by'] =  $this->data['user']->id;
-                $this->db->where($this->table_id_key, $data[$this->table_id_key]);
-                $this->db->update($this->table, $data);
-            }
+            $this->repository->save($data);
             $return = array('message' => sprintf(lang('save_success'), lang('heading') . ' ' . $data['name']), 'status' => 'success', 'redirect' => $this->data['module_url']);
         } else {
             $return = $validation;
@@ -147,5 +141,29 @@ class Approval_role extends CI_Controller
         $get_data = $this->repository->datatable($start, $length, $filter, $order, $this->data['table']);
         $output = $this->repository->setOutputDatatable($get_data, $draw);
         echo json_encode($output);
+    }
+
+    public function delete($token)
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+
+        $dataToken = get_jwt_decryption($token);
+        $id = $dataToken->id;
+
+        Capsule::beginTransaction();
+        try {
+
+            $act = Approval_rule_model_eloquent::findOrFail($id);
+            $act->delete();
+
+            $return = ['message' => sprintf(lang('delete_success'), lang('heading') . ' ' . $act->name), 'status' => 'success'];
+
+            Capsule::commit();
+        } catch (\Throwable $th) {
+            Capsule::rollback();
+            $return = array('message' => $th->getMessage(), 'status' => 'error');
+        }
+
+        echo json_encode($return);
     }
 }

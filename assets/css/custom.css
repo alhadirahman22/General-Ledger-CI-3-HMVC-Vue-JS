@@ -30,3 +30,17 @@
         float: none;
     }
 }
+
+.multiselect-native-select .btn-group {
+    display: none !important;
+}
+
+.multiselect__tags {
+    min-height: 60px !important;
+    padding: 10px 40px 30px 8px !important;
+    font-size: 12px !important;
+}
+
+.multiselect__content {
+    font-size: 12px !important;
+}
