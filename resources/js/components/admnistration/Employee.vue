@@ -94,44 +94,46 @@
               Department
             </button>
           </div>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Department</th>
-                <th>Jabatan</th>
-                <th>*</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(item, index) in jabatan_department_employee"
-                :key="index"
-              >
-                <td>
-                  <Select2
-                    v-model="jabatan_department_employee[index].department_id"
-                    :options="getDepartmentOptions()"
-                    placeholder="Pilih Department"
-                    @select="onSelectDepartment($event, index)"
-                    @change="onChangeDepartment($event, index)"
-                  />
-                </td>
-                <td>
-                  <Select2
-                    v-model="jabatan_department_employee[index].jabatan_id"
-                    :options="jabatanOptions[index]"
-                    placeholder="Pilih jabatan"
-                    @select="onSelectJabatan($event, index)"
-                  />
-                </td>
-                <td>
-                  <button class="btn btn-danger" @click="deleteDepJab(index)">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Department</th>
+                  <th>Jabatan</th>
+                  <th>*</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in jabatan_department_employee"
+                  :key="index"
+                >
+                  <td>
+                    <Select2
+                      v-model="jabatan_department_employee[index].department_id"
+                      :options="getDepartmentOptions()"
+                      placeholder="Pilih Department"
+                      @select="onSelectDepartment($event, index)"
+                      @change="onChangeDepartment($event, index)"
+                    />
+                  </td>
+                  <td>
+                    <Select2
+                      v-model="jabatan_department_employee[index].jabatan_id"
+                      :options="jabatanOptions[index]"
+                      placeholder="Pilih jabatan"
+                      @select="onSelectJabatan($event, index)"
+                    />
+                  </td>
+                  <td>
+                    <button class="btn btn-danger" @click="deleteDepJab(index)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
