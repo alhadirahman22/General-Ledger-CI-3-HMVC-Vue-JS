@@ -210,6 +210,17 @@
 			</li>
 
 		<?php endif ?>
+		<?php if ($this->aauth->is_allowed('reimbursment')) : ?>
+			<li data-name="reimbursment" class="<?php echo menu_active('reimbursment', false); ?> disabled">
+				<a href="<?= base_url('reimbursment'); ?>" class="faa-parent animated-hover">
+					<i class="menu-icon fa fa-archive faa-shake"></i>
+					<span class="menu-text">
+						Reimbursment
+					</span>
+				</a>
+				<b class="arrow"></b>
+			</li>
+		<?php endif ?>
 
 	</ul><!-- /.nav-list -->
 
