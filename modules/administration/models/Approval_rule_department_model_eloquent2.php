@@ -3,13 +3,13 @@
 namespace Modules\administration\models;
 
 
-use Illuminate\Database\Eloquent\Relations\Pivot as Pivot;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 use Modules\administration\models\Departments_model_eloquent;
 use Modules\administration\models\Approval_rule_model_eloquent;
 use Modules\administration\models\Approval_rule_department_emp_model_eloquent;
 
 
-class Approval_rule_department_model_eloquent extends Pivot
+class Approval_rule_department_model_eloquent2 extends Eloquent
 {
     protected $table = 'approval_rule_department';
     protected $primaryKey = 'approval_rule_department_id';

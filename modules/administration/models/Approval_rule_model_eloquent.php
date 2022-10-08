@@ -5,7 +5,9 @@ namespace Modules\administration\models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model as Eloquent;
+use Modules\administration\models\Departments_model_eloquent;
 use Modules\administration\models\Approval_rule_config_model_eloquent;
+use Modules\administration\models\Approval_rule_department_model_eloquent;
 
 
 class Approval_rule_model_eloquent extends Eloquent

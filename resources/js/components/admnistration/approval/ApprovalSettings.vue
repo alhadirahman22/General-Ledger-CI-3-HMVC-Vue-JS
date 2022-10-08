@@ -15,9 +15,7 @@
         </div>
       </div>
       <div class="form-group row" v-show="approval_rule_id !== null">
-        <label for="jenis_mutasi_id" class="col-form-label col-md-3">
-          Pilih Department</label
-        >
+        <label for="" class="col-form-label col-md-3"> Pilih Department</label>
         <div class="col-md-6">
           <multiselect
             v-model="department_id"
@@ -188,7 +186,41 @@ export default {
     disableAllInput() {
       this.disableInput = true;
     },
-    showData() {},
+    async showData() {
+      console.log(this.data_approval);
+      this.approval_rule_id = this.data_approval.approval_rule_id;
+      await this.loadDataDepartment();
+      const tagging_department = this.data_approval.tagging_department;
+      for (let index = 0; index < tagging_department.length; index++) {
+        this.department_id.push({
+          id: String(tagging_department[index].department_id),
+          text: String(tagging_department[index].name),
+        });
+        await this.onSelectDepartment({
+          id: tagging_department[index].department_id,
+          text: null,
+        });
+      }
+
+      for (let index = 0; index < this.departmentJabatan.length; index++) {
+        const department_id = this.departmentJabatan[index].department_id;
+        const find = tagging_department.find(
+          (x) => parseInt(x.department_id) == parseInt(department_id)
+        );
+        let jabatan = find.pivot.jabatan;
+
+        for (let i = 0; i < jabatan.length; i++) {
+          const jabatan_id = jabatan[i].jabatan_id;
+
+          const findJabatan = this.jabatanOptions.find(
+            (x) => parseInt(x.id) == parseInt(jabatan_id)
+          );
+          jabatan[i].employeeName = findJabatan.employeeName;
+        }
+        this.departmentJabatan[index].jabatan = jabatan;
+        this.departmentJabatan[index].typeApproval = find.pivot.type_approval;
+      }
+    },
     onChangeApproval_department(val) {},
     onSelectjenisApproval_department() {
       this.loadDataDepartment();
@@ -298,11 +330,11 @@ export default {
         }
 
         const postData = {
-          jenis_mutasi_department: {
-            jenis_mutasi_id: this.jenis_mutasi_id,
+          approval_rule_department: {
+            approval_rule_id: this.approval_rule_id,
             department_id: x,
           },
-          jenis_mutasi_department_approval: this.departmentJabatan,
+          approval_rule_department_approval: this.departmentJabatan,
         };
 
         App_template.loadingStart();
