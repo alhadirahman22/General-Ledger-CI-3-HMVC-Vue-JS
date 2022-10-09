@@ -10,7 +10,7 @@ use Modules\reimbursment\repository\main\ReimbursmentRepositoryInterface;
 class ReimbursmentRepository implements ReimbursmentRepositoryInterface
 {
     protected $CI;
-    protected $statusMainMutasi =   [
+    public $statusMainApproval =   [
         '1' => 'Approved',
         '0' => 'Waiting',
         '-1' => 'Reject',
@@ -18,6 +18,8 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
         '-2' => 'Awaiting',
         '99' => 'Terbayarkan'
     ];
+
+
     public function __construct()
     {
         $this->CI = &get_instance();
@@ -25,6 +27,7 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
 
     public function opStatus()
     {
+        return $this->statusMainApproval;
     }
 
     public function getApprovalData($codeApproval)

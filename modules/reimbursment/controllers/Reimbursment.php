@@ -22,12 +22,14 @@ class Reimbursment extends CI_Controller
 
         $this->data['menu'] = 'reimbursment';
         $this->data['module_url'] = site_url('reimbursment/');
+        $this->repository = new ReimbursmentRepository();
+        $this->midlleware = new ReimbursmentMiddleware();
         $this->data['table'] = [
             'columns' => [
                 '0' => ['name' => 'a.code', 'title' => 'Code', 'class' => 'default-sort', 'sort' => 'desc', 'filter' => ['type' => 'text']],
                 '1' => ['name' => 'a.name', 'title' => 'Name', 'filter' => ['type' => 'text'], 'class' => 'default-sort'],
                 '2' => ['name' => 'b.name', 'title' => 'Requested', 'filter' => ['type' => 'text'], 'class' => 'default-sort'],
-                '3' => ['name' => 'a.status', 'title' => 'Status', 'filter' => ['type' => 'text'], 'class' => 'default-sort'],
+                '3' => ['name' => 'a.status', 'title' => 'Status',  'filter' => ['type' => 'dropdown', 'options' => $this->repository->opStatus()], 'class' => 'default-sort'],
                 '4' => ['name' => 'a.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'no-sort'],
                 '5' => ['name' => 'a.created_by', 'title' => lang('created_by'), 'filter' => false, 'class' => 'no-sort'],
                 '6' => ['name' => 'a.updated_at', 'title' => lang('updated_at'), 'filter' => false, 'class' => 'no-sort'],
@@ -40,9 +42,6 @@ class Reimbursment extends CI_Controller
         }
         $this->data['filter_name'] = 'table_filter_reimbursment';
         $this->table = 'reimbursment';
-
-        $this->repository = new ReimbursmentRepository();
-        $this->midlleware = new ReimbursmentMiddleware();
     }
 
     public function index()
