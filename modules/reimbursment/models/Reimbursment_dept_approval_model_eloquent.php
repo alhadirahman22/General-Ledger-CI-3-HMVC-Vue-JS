@@ -27,6 +27,6 @@ class Reimbursment_dept_approval_model_eloquent extends Eloquent
 
     public function approval()
     {
-        return $this->hasMany(Mutasi_benda_approval_model_eloquent::class, 'mutasi_benda_department_approval_id', 'mutasi_benda_department_approval_id');
+        return $this->hasMany(Reimbursment_dept_approval_emp_model_eloquent::class, 'reimbursment_dept_approval_emp_id', 'reimbursment_dept_approval_emp_id');
     }
 }

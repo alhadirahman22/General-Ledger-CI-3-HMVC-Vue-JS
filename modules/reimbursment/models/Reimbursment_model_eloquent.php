@@ -5,7 +5,7 @@ namespace Modules\reimbursment\models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Modules\administration\models\Employee_model_eloquent;
-use Modules\reimbursment\models\Reimbursment_model_eloquent;
+use Modules\reimbursment\models\Reimbursment_dept_approval_model_eloquent;
 
 class Reimbursment_model_eloquent extends Eloquent
 {

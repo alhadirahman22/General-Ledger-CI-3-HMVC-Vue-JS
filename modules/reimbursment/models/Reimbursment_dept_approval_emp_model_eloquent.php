@@ -4,6 +4,7 @@ namespace Modules\reimbursment\models;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Modules\administration\models\Employee_model_eloquent;
+use Modules\reimbursment\models\Reimbursment_approval_log_model_eloquent;
 
 
 class Reimbursment_dept_approval_emp_model_eloquent extends Eloquent

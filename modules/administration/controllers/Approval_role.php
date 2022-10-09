@@ -20,7 +20,7 @@ class Approval_role extends CI_Controller
     {
         parent::__construct();
         $this->perm = 'administration/approval_role';
-        $this->table_id_key = 'approval_rule' . '_id'; // 'warehouse_sub_id';
+        $this->table_id_key = 'approval_rule' . '_id';
         $this->aauth->control($this->perm);
 
         $this->lang->load('approval_role', settings('language'));

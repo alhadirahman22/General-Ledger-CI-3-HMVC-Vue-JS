@@ -43,6 +43,7 @@ Vue.component('widget-form', require('./components/WidgetForm.vue').default);
 Vue.component('adm-employee', require('./components/admnistration/Employee.vue').default);
 Vue.component('clear-log', require('./components/admnistration/auditTrails/clearLog.vue').default);
 Vue.component('approval-settings', require('./components/admnistration/approval/ApprovalSettings.vue').default);
+Vue.component('reimbursment-form', require('./components/reimbursment/ReimbursmentForm.vue').default);
 
 
 // Main Component

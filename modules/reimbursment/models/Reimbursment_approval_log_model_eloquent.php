@@ -29,7 +29,7 @@ class Reimbursment_approval_log_model_eloquent extends Eloquent
         return $this->hasMany(self::class, 'parent_reimbursment_approval_log_id', 'reimbursment_approval_log_id');
     }
 
-    public function mutasi_benda_approval()
+    public function emp_approval()
     {
         return $this->belongsTo(Reimbursment_dept_approval_emp_model_eloquent::class, 'reimbursment_dept_approval_emp_id', 'reimbursment_dept_approval_emp_id');
     }
