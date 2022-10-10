@@ -48,6 +48,7 @@ Vue.component('reimbursment-form', require('./components/reimbursment/Reimbursme
 
 // Main Component
 Vue.component('range-date', require('./components/main/RangeDate.vue').default);
+Vue.component('input-currency', require('./components/main/InputCurrency.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

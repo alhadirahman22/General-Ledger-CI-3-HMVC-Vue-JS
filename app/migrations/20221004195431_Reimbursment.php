@@ -14,6 +14,7 @@ class Migration_Reimbursment extends CI_Migration
             $table->string('name', 100);
             $table->date('date_reimbursment');
             $table->text('desc')->nullable(true);
+            $table->double('value', 15, 2)->default(0.00);
             $table->text('link_file')->nullable(true);
             $table->text('pathfile')->nullable(true);
             $table->integer('created_by')->nullable(true);

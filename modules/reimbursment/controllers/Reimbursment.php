@@ -11,6 +11,8 @@ class Reimbursment extends CI_Controller
 
     protected $repository;
     protected $midlleware;
+    public $prefixSettings;
+    public $codeApproval;
 
     public function __construct()
     {
@@ -42,6 +44,8 @@ class Reimbursment extends CI_Controller
         }
         $this->data['filter_name'] = 'table_filter_reimbursment';
         $this->table = 'reimbursment';
+        $this->prefixSettings = settings('prefix_reimbursment');
+        $this->codeApproval = $this->repository->getCodeApproval();
     }
 
     public function index()
@@ -76,5 +80,31 @@ class Reimbursment extends CI_Controller
         $this->data['iconBtn'] =  $this->m_master->encodeToPropVue($iconBtn);
         $this->data['moduleData'] =  $this->m_master->encodeToPropVue($moduleData);
         $this->load->view('reimbursment_form', $this->data);
+    }
+
+    public function save()
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+
+        $validation = $this->midlleware->validation($dataAll);
+
+        if ($validation['status'] == 'success') {
+            $save = $this->repository->create($dataAll);
+            if ($save['status'] == 'success') {
+                $return = array('code' => $save['code'], 'message' => sprintf(lang('save_success'), lang('heading') . ' ' . $dataAll['name']), 'status' => 'success', 'redirect' => $this->data['module_url']);
+            } else {
+                $return = $save;
+            }
+        } else {
+            $return = $validation;
+        }
+
+        if (isset($return['redirect'])) {
+            $this->session->set_flashdata('form_response_status', $return['status']);
+            $this->session->set_flashdata('form_response_message', $return['message']);
+        }
+        echo json_encode($return);
     }
 }

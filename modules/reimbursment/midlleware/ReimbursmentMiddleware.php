@@ -34,4 +34,48 @@ class ReimbursmentMiddleware
 
         return ['data' => $data, 'id' => $id];
     }
+
+    public function validation($dataPost)
+    {
+        $return = array('message' => '', 'status' => 'success');
+        $this->CI->load->library('form_validation');
+
+        $form_validation_arr = array(
+            array(
+                'field' => 'name',
+                'label' => 'Nama',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'date_reimbursment',
+                'label' => 'Transaction Date',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'desc',
+                'label' => 'Desc',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'requested_by',
+                'label' => 'Requested By',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'value',
+                'label' => 'Price',
+                'rules' => 'required'
+            ),
+        );
+
+
+        $this->CI->form_validation->set_data($dataPost);
+        $this->CI->form_validation->set_rules($form_validation_arr);
+
+        if ($this->CI->form_validation->run() !== true) {
+            $return = array('message' => validation_errors(), 'status' => 'error');
+        }
+
+        return $return;
+    }
 }

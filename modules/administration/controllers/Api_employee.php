@@ -1,6 +1,8 @@
 <?php
 
-use Repository\administration\EmployeeRepository;
+use Modules\administration\repository\EmployeeRepository;
+
+
 
 defined('BASEPATH') or exit('No direct script access allowed');
 

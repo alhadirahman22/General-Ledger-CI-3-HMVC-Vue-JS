@@ -1,8 +1,8 @@
 <?php
 
-namespace Repository\mutasi\main;
+namespace Modules\reimbursment\repository\main;
 
-interface MutasiLogRepositoryInterface
+interface ReimbursmentLogInterface
 {
     public function getData($id);
     public function setOutput($data);
