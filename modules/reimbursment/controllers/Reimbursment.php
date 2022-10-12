@@ -28,14 +28,13 @@ class Reimbursment extends CI_Controller
         $this->midlleware = new ReimbursmentMiddleware();
         $this->data['table'] = [
             'columns' => [
-                '0' => ['name' => 'a.code', 'title' => 'Code', 'class' => 'default-sort', 'sort' => 'desc', 'filter' => ['type' => 'text']],
-                '1' => ['name' => 'a.name', 'title' => 'Name', 'filter' => ['type' => 'text'], 'class' => 'default-sort'],
-                '2' => ['name' => 'b.name', 'title' => 'Requested', 'filter' => ['type' => 'text'], 'class' => 'default-sort'],
-                '3' => ['name' => 'a.status', 'title' => 'Status',  'filter' => ['type' => 'dropdown', 'options' => $this->repository->opStatus()], 'class' => 'default-sort'],
-                '4' => ['name' => 'a.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'no-sort'],
-                '5' => ['name' => 'a.created_by', 'title' => lang('created_by'), 'filter' => false, 'class' => 'no-sort'],
-                '6' => ['name' => 'a.updated_at', 'title' => lang('updated_at'), 'filter' => false, 'class' => 'no-sort'],
-                '7' => ['name' => 'a.updated_by', 'title' => lang('updated_by'), 'filter' => false, 'class' => 'no-sort'],
+                '0' => ['name' => 'reimbursment.code', 'title' => 'Code & Name', 'class' => 'default-sort', 'sort' => 'desc', 'filter' => ['type' => 'text']],
+                '1' => ['name' => 'employees.name', 'title' => 'Requested', 'filter' => ['type' => 'text'], 'class' => 'default-sort'],
+                '2' => ['name' => 'reimbursment.value', 'title' => 'Price', 'filter' => false, 'class' => 'no-sort'],
+                '3' => ['name' => 'reimbursment.date_reimbursment', 'title' => 'Trans Date', 'filter' => false, 'class' => 'default-sort'],
+                '4' => ['name' => 'reimbursment.status', 'title' => 'Status',  'filter' => ['type' => 'dropdown', 'options' => $this->repository->opStatus()], 'class' => 'default-sort'],
+                '5' => ['name' => 'reimbursment.desc', 'title' => 'Desc', 'filter' => false, 'class' => 'no-sort'],
+                '6' => ['name' => 'reimbursment.created_at', 'title' => lang('created_at'), 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
         ];
@@ -105,6 +104,38 @@ class Reimbursment extends CI_Controller
             $this->session->set_flashdata('form_response_status', $return['status']);
             $this->session->set_flashdata('form_response_message', $return['message']);
         }
+        echo json_encode($return);
+    }
+
+    public function get_list()
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $start = $this->input->post('start');
+        $length = $this->input->post('length');
+        $order = $this->input->post('order')[0];
+        $draw = intval($this->input->post('draw'));
+        $filter = $this->input->post('filter');
+        $this->session->set_userdata($this->data['filter_name'], $filter);
+        $output['data'] = array();
+
+        $get_data = $this->repository->datatable($start, $length, $filter, $order, $this->data['table']);
+        $output = $this->repository->setOutputDatatable($get_data, $draw);
+        echo json_encode($output);
+    }
+
+    public function delete($token)
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $this->aauth->control($this->perm . '/delete');
+        $dataToken = get_jwt_decryption($token);
+        $id = $dataToken->id;
+        $delete = $this->repository->delete($id);
+        if ($delete['status'] == 'success') {
+            $return = ['message' => sprintf(lang('delete_success'), lang('heading')), 'status' => 'success'];
+        } else {
+            $return =  $delete;
+        }
+
         echo json_encode($return);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Repository\mutasi;
+namespace Modules\reimbursment\repository;
 
 use Modules\reimbursment\repository\main\ReimbursmentLogInterface;
 use Modules\reimbursment\models\Reimbursment_approval_log_model_eloquent;

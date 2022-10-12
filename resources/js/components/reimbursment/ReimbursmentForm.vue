@@ -177,7 +177,7 @@ export default {
             this.code = json.code;
             this.$swal({
               title: "Code",
-              html: "<h1>Your code is <br/>" + json.code + "</h1>",
+              html: "<h4>Your code is <br/>" + json.code + "</h4>",
               type: "success",
               confirmButtonText: "OK",
             }).then(function () {
@@ -187,7 +187,7 @@ export default {
             App_template.response_form_token(json);
           }
         } catch (error) {
-          console.log(err);
+          console.log(error);
         } finally {
           await App_template.timeout(1000);
           App_template.loadingEnd(0);

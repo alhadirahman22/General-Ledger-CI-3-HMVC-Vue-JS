@@ -9,12 +9,12 @@ use Modules\reimbursment\models\Reimbursment_approval_log_model_eloquent;
 
 class Reimbursment_dept_approval_emp_model_eloquent extends Eloquent
 {
-    protected $table = 'approval_rule_department_emp';
+    protected $table = 'reimbursment_dept_approval_emp';
     protected $primaryKey = 'reimbursment_dept_approval_emp_id';
     public $timestamps = false;
 
     protected $fillable = [
-        'mutasi_benda_department_approval_id',
+        'reimbursment_dept_approval_id',
         'employee_id',
         'status',
         'condition',

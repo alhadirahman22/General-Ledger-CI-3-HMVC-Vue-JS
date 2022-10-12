@@ -225,7 +225,7 @@ class Departments extends CI_Controller
     public function delete($token)
     {
         $this->input->is_ajax_request() or exit('No direct post submit allowed!');
-
+        $this->aauth->control($this->perm . '/delete');
         $dataToken = get_jwt_decryption($token);
         $id = $dataToken->id;
 
