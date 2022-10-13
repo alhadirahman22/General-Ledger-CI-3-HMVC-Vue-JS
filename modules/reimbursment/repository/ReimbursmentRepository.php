@@ -12,6 +12,7 @@ use Modules\administration\repository\approval\ApprovalRuleRepository;
 use Modules\reimbursment\repository\main\ReimbursmentRepositoryInterface;
 use Modules\reimbursment\models\Reimbursment_dept_approval_model_eloquent;
 use Modules\reimbursment\models\Reimbursment_dept_approval_emp_model_eloquent;
+use Modules\reimbursment\repository\main\ReimbursmentRepositoryStatusInterface;
 
 
 
@@ -134,8 +135,65 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
             return ['status' => 'error', 'message' => 'Data approval belum di set'];
         }
     }
-    public function loadApprovalMutasi($codeApproval)
+    public function loadApprovalMutasi($reimbursment_id)
     {
+        $newFormatData = [];
+        $data = $this->findByID($reimbursment_id)->toArray();
+        $statusMain = ReimbursmentRepositoryStatusInterface::statusData;
+        $reimbursment_department = $data['reimbursment_department'];
+
+        for ($i = 0; $i < count($reimbursment_department); $i++) {
+            $newObj = [];
+
+            $approvalNew = [];
+            $approval = $reimbursment_department[$i]['approval'];
+            for ($j = 0; $j < count($approval); $j++) {
+                $obj = [];
+                $obj['condition'] = $approval[$j]['condition'];
+
+                if ($reimbursment_department[$i]['condition'] == '1') {
+                    $obj['statusShow'] = $statusMain[$approval[$j]['status']];
+                } else {
+                    // change waiting to awaiting, replace status
+                    if ($approval[$j]['status'] == '0') {
+                        $obj['statusShow'] = $statusMain['-2'];
+                    } else {
+                        $obj['statusShow'] = $statusMain[$approval[$j]['status']];
+                    }
+                }
+
+
+                $obj['employeeData'] = $approval[$j]['employee'];
+                $obj['employee_id'] =  $approval[$j]['employee_id'];
+                $obj['reimbursment_dept_approval_emp_id'] = $approval[$j]['reimbursment_dept_approval_emp_id'];
+                $obj['reimbursment_dept_approval_id'] = $approval[$j]['reimbursment_dept_approval_id'];
+                $obj['status'] = $approval[$j]['status'];
+                $obj['log'] = $approval[$j]['log'];
+                $approvalNew[] = $obj;
+            }
+            $condition = $reimbursment_department[$i]['condition'];
+            $departmentData = $reimbursment_department[$i]['department'];
+            $department_id = $reimbursment_department[$i]['department_id'];
+            $reimbursment_dept_approval_id = $reimbursment_department[$i]['reimbursment_dept_approval_id'];
+            $status =  $reimbursment_department[$i]['status'];
+            $statusShow =  $statusMain[$reimbursment_department[$i]['status']];
+            $type_approval =  $reimbursment_department[$i]['type_approval'];
+
+            $newObj['approval'] = $approvalNew;
+            $newObj['condition'] = $condition;
+            $newObj['departmentData'] = $departmentData;
+            $newObj['department_id'] = $department_id;
+            $newObj['reimbursment_dept_approval_id'] = $reimbursment_dept_approval_id;
+            $newObj['reimbursment_id'] = $reimbursment_id;
+            $newObj['status'] = $status;
+            $newObj['statusShow'] = $statusShow;
+            $newObj['type_approval'] = $type_approval;
+
+
+            $newFormatData[] = $newObj;
+        }
+
+        return ['status' => 'success', 'message' => '', 'data' => $newFormatData];
     }
     public function approve($item2)
     {
@@ -258,10 +316,16 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
             Capsule::beginTransaction();
 
             try {
+
+                $approval_rule_id = $this->CI->db->where('code_approval', $codeApproval)->get('approval_rule_config')->row()->approval_rule_id;
+                $ApprovalRuleRepository = new ApprovalRuleRepository();
+                $approvalData = $ApprovalRuleRepository->findByID($approval_rule_id)->toArray();
+
                 $Reimbursment = new Reimbursment_model_eloquent;
                 $Reimbursment->code = $code;
                 $Reimbursment->name = $dataPost['name'];
                 $Reimbursment->date_reimbursment = $dataPost['date_reimbursment'];
+                $Reimbursment->type_approval = $approvalData['type_approval'];
                 $Reimbursment->desc = $dataPost['desc'];
                 $Reimbursment->value = $dataPost['value'];
                 $Reimbursment->requested_by = $dataPost['requested_by'];

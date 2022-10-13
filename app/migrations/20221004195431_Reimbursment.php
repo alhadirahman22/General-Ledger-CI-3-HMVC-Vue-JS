@@ -13,6 +13,7 @@ class Migration_Reimbursment extends CI_Migration
             $table->string('code', 100);
             $table->string('name', 100);
             $table->date('date_reimbursment');
+            $table->enum('type_approval', ['1', '2'])->comment('1 = series, 2 = paralel ')->default('1');
             $table->text('desc')->nullable(true);
             $table->double('value', 15, 2)->default(0.00);
             $table->text('link_file')->nullable(true);

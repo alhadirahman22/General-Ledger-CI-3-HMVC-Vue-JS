@@ -169,4 +169,14 @@ class Reimbursment extends CI_Controller
         $this->data['moduleData'] =  $this->m_master->encodeToPropVue($moduleData);
         $this->load->view('reimbursment_form', $this->data);
     }
+
+    public function loadApproval()
+    {
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+        $reimbursment_id = $dataAll['reimbursment_id'];
+        $dataShow = $this->repository->loadApprovalMutasi($reimbursment_id);
+
+        echo json_encode($dataShow);
+    }
 }

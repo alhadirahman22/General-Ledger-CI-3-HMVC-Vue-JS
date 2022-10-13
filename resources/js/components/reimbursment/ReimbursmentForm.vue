@@ -84,6 +84,78 @@
           ></input-currency>
         </div>
       </div>
+      <div v-show="dataApproval.length">
+        <div style="padding: 10px; margin-bottom: 10px">
+          <h5>
+            <strong>Approval Type for Department : {{ approvalType }}</strong>
+          </h5>
+        </div>
+        <div class="row">
+          <div
+            class="col-xs-12"
+            v-for="(item, index) in dataApproval"
+            :key="index"
+          >
+            <div class="row">
+              <div style="padding: 10px; margin-bottom: 10px">
+                <div class="pull-left">
+                  <span style="color: red">{{
+                    "(" + (index + 1) + ") " + item.departmentData.name
+                  }}</span>
+                </div>
+                <div class="pull-right">
+                  <span style="color: blue">
+                    Approval Type for Employee :
+                    {{ item.type_approval == "1" ? "Series" : "Paralel" }}</span
+                  >
+                </div>
+              </div>
+              <div style="margin-bottom: 10px">
+                <table class="table table-striped table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center; width: 10px">No</th>
+                      <th style="text-align: center; width: 25%">Employee</th>
+                      <th style="text-align: center">Status</th>
+                      <th style="text-align: center">Desc</th>
+                      <th style="text-align: center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item2, index2) in item.approval" :key="index2">
+                      <td>{{ index2 + 1 }}</td>
+                      <td>{{ item2.employeeData.name }}</td>
+                      <td
+                        v-html="setStatus(item2)"
+                        style="text-align: center"
+                      ></td>
+                      <td v-html="setDesc(item2)"></td>
+                      <td style="text-align: center">
+                        <div v-show="showbtn(item, item2)">
+                          <button
+                            class="btn btn-primary btn-xs"
+                            @click="approve(item2)"
+                            :disabled="btnApproval"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            class="btn btn-danger btn-xs"
+                            @click="reject(item2)"
+                            :disabled="btnApproval"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div slot="footerbutton">
       <div class="pull-left">
@@ -149,9 +221,60 @@ export default {
       desc: null,
       reimbursment_id: null,
       value: null,
+      dataApproval: [],
+      approvalType: null,
+      btnApproval: false,
     };
   },
   methods: {
+    showbtn(item, item2) {
+      if (
+        item.condition == "1" &&
+        item2.condition == "1" &&
+        parseInt(this.moduledata.user.employee_id) == item2.employee_id
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+    setStatus(item) {
+      let color = "";
+      switch (item.status) {
+        case "0":
+          color = "color:blue;";
+          break;
+        case "1":
+          color = "color:green;";
+          break;
+        case "-1":
+          color = "color:red;";
+          break;
+        case "2":
+          color = "color:#fb00ff;";
+          break;
+        case "-2":
+          color = "color:#b326fbd6;";
+          break;
+        default:
+          break;
+      }
+
+      return '<span style="' + color + '">' + item.statusShow + "</span>";
+    },
+    setDesc(item) {
+      const log = item.log;
+      const le = log.length;
+      const dateCreated = moment(item.created_at).format("DD MMM YYYY");
+      return (
+        "<span>" +
+        log[le - 1].desc +
+        "<span><br/>" +
+        '<span style="color:#5f8b25">' +
+        dateCreated +
+        "</span>"
+      );
+    },
     async loadEmployee() {
       const res = await axios(base_url + "administration/api_employee/fetch");
       if (res.data.success) {
@@ -208,24 +331,45 @@ export default {
     },
     async approve() {},
     async reject() {},
-    loadShowData() {
+    async loadShowData() {
       if (typeof this.dataprop.reimbursment_id != "undefined") {
         this.disableInput = true;
         this.action = "view";
         this.code = this.dataprop.code;
         this.name = this.dataprop.name;
         this.reimbursment_id = this.dataprop.reimbursment_id;
+        this.approvalType =
+          this.dataprop.type_approval == "1" ? "Series" : "Paralel";
+        await this.loadApproval();
         this.date_reimbursment = this.dataprop.date_reimbursment;
         this.requested_by = this.dataprop.requested_by;
         this.value = this.dataprop.value;
         this.desc = this.dataprop.desc;
-        console.log(this.dataprop);
       }
     },
+    async loadApproval() {
+      const postData = {
+        reimbursment_id: this.reimbursment_id,
+      };
+
+      try {
+        const token = jwt_encode(postData, jwtKey);
+        const json = await App_template.AjaxSubmitFormPromises(
+          this.moduledata.module_url + "loadApproval",
+          token
+        );
+
+        if (json.status == "error") {
+          toastr.info(json.msg);
+        } else {
+          this.dataApproval = json.data;
+        }
+      } catch (error) {}
+    },
   },
-  created() {
+  async created() {
+    await this.loadShowData();
     this.loadEmployee();
-    this.loadShowData();
   },
 };
 </script>

@@ -27,6 +27,6 @@ class Reimbursment_dept_approval_emp_model_eloquent extends Eloquent
 
     public function log()
     {
-        return $this->hasMany(Reimbursment_approval_log_model_eloquent::class, 'reimbursment_approval_log_id', 'reimbursment_approval_log_id');
+        return $this->hasMany(Reimbursment_approval_log_model_eloquent::class, 'reimbursment_dept_approval_emp_id', 'reimbursment_dept_approval_emp_id');
     }
 }
