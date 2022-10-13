@@ -127,15 +127,46 @@ class Reimbursment extends CI_Controller
     {
         $this->input->is_ajax_request() or exit('No direct post submit allowed!');
         $this->aauth->control($this->perm . '/delete');
+
         $dataToken = get_jwt_decryption($token);
         $id = $dataToken->id;
-        $delete = $this->repository->delete($id);
-        if ($delete['status'] == 'success') {
-            $return = ['message' => sprintf(lang('delete_success'), lang('heading')), 'status' => 'success'];
+        $rule = $this->midlleware->delete($id);
+        if ($rule) {
+            $delete = $this->repository->delete($id);
+            if ($delete['status'] == 'success') {
+                $return = ['message' => sprintf(lang('delete_success'), lang('heading')), 'status' => 'success'];
+            } else {
+                $return =  $delete;
+            }
         } else {
-            $return =  $delete;
+            $return = ['message' => 'You are not authorize delete this action', 'status' => 'error'];
         }
 
+
         echo json_encode($return);
+    }
+
+    public function view($token)
+    {
+        $this->aauth->control($this->perm . '/view');
+
+        $dataToken = get_jwt_decryption($token);
+        $id = $dataToken->id;
+
+        $dataprop = $this->repository->findByID($id);
+
+        $this->output->set_title((!empty($id) ? lang('edit') : lang('add')) . ' ' . lang('heading'));
+        $this->data['headingOverwrite'] = 'Form ' . lang('heading');
+        $this->template->_init();
+        $this->template->form();
+        $moduleData = $this->data;
+        $iconBtn = [
+            'cancel_w_icon' => lang('cancel_w_icon'),
+            'save_w_icon' => lang('save_w_icon'),
+        ];
+        $this->data['dataprop'] = $this->m_master->encodeToPropVue($dataprop);
+        $this->data['iconBtn'] =  $this->m_master->encodeToPropVue($iconBtn);
+        $this->data['moduleData'] =  $this->m_master->encodeToPropVue($moduleData);
+        $this->load->view('reimbursment_form', $this->data);
     }
 }

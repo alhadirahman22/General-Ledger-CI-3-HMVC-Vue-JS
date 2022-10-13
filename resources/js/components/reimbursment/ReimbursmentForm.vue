@@ -25,7 +25,13 @@
       <div class="form-group row">
         <label for="" class="col-form-label col-md-3"> Name</label>
         <div class="col-md-6">
-          <input type="text" class="form-control" name="name" v-model="name" />
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            v-model="name"
+            :disabled="disableInput"
+          />
         </div>
       </div>
       <div class="form-group row">
@@ -36,6 +42,7 @@
             class="form-control"
             name="date_reimbursment"
             v-model="date_reimbursment"
+            :disabled="disableInput"
           />
         </div>
       </div>
@@ -47,6 +54,7 @@
             id=""
             rows="4"
             class="form-control"
+            :disabled="disableInput"
             v-model="desc"
           ></textarea>
         </div>
@@ -69,7 +77,11 @@
           Prices</label
         >
         <div class="col-md-4">
-          <input-currency v-model="value" :name="'value'"></input-currency>
+          <input-currency
+            v-model="value"
+            :name="'value'"
+            :disabled="disableInput"
+          ></input-currency>
         </div>
       </div>
     </div>
@@ -196,9 +208,24 @@ export default {
     },
     async approve() {},
     async reject() {},
+    loadShowData() {
+      if (typeof this.dataprop.reimbursment_id != "undefined") {
+        this.disableInput = true;
+        this.action = "view";
+        this.code = this.dataprop.code;
+        this.name = this.dataprop.name;
+        this.reimbursment_id = this.dataprop.reimbursment_id;
+        this.date_reimbursment = this.dataprop.date_reimbursment;
+        this.requested_by = this.dataprop.requested_by;
+        this.value = this.dataprop.value;
+        this.desc = this.dataprop.desc;
+        console.log(this.dataprop);
+      }
+    },
   },
   created() {
     this.loadEmployee();
+    this.loadShowData();
   },
 };
 </script>

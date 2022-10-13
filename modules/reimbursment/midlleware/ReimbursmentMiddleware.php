@@ -2,6 +2,8 @@
 
 namespace Modules\reimbursment\midlleware;
 
+use Modules\reimbursment\models\Reimbursment_model_eloquent;
+
 class ReimbursmentMiddleware
 {
     protected $CI;
@@ -77,5 +79,16 @@ class ReimbursmentMiddleware
         }
 
         return $return;
+    }
+
+    public function delete($reimbursment_id)
+    {
+        $data = Reimbursment_model_eloquent::find($reimbursment_id);
+        $user_id =  $this->CI->data['user']->id;
+        if ($user_id == $data->created_by || $this->CI->aauth->is_admin()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

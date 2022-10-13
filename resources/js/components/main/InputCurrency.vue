@@ -8,6 +8,7 @@
       ref="input"
       type="number"
       v-on:keyup="numberingFormat"
+      :disabled="disabled"
     />
     <span style="color: red">{{ amount }}</span>
   </div>
@@ -15,7 +16,7 @@
 
 <script>
 export default {
-  props: ["value", "name"],
+  props: ["value", "name", "disabled"],
   model: {
     prop: "value",
     event: "update",
@@ -29,6 +30,11 @@ export default {
     const input = this.$refs.input;
     if (input.value.hasAttribute("autofocus")) {
       input.value.focus();
+    }
+  },
+  created() {
+    if (this.value != "" && this.value != undefined) {
+      this.amount = App_template.formatRupiah(this.value);
     }
   },
   methods: {
