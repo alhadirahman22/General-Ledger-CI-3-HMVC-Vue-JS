@@ -197,9 +197,111 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
     }
     public function approve($item2)
     {
+        $dataMutasiDep = Reimbursment_dept_approval_model_eloquent::find($item2['reimbursment_dept_approval_id']);
+        $check = $this->ReimbursmentRuleAction->approve($dataMutasiDep->reimbursment_id, $dataMutasiDep->department_id, $item2['employee_id']);
+        if ($check['status'] == 'success') {
+            // do approval
+            Capsule::beginTransaction();
+            try {
+                $reimbursment_dept_approval_emp_id =  $item2['reimbursment_dept_approval_emp_id'];
+                $Reimbursment_dept_approval_emp_model_eloquent = Reimbursment_dept_approval_emp_model_eloquent::find($reimbursment_dept_approval_emp_id);
+
+                $Reimbursment_dept_approval_emp_model_eloquent->status =  '1';
+                $Reimbursment_dept_approval_emp_model_eloquent->save();
+
+                $reimbursment_dept_approval_id = $Reimbursment_dept_approval_emp_model_eloquent->reimbursment_dept_approval_id;
+
+                // find index
+                $indexApproved = $this->getIndexBydata($reimbursment_dept_approval_id, $reimbursment_dept_approval_emp_id);
+
+                // find index dept
+                $indexApprovedDept = $this->getIndexDeptBydata($reimbursment_dept_approval_id, $dataMutasiDep->mutasi_benda_id);
+
+                $updateAfterApproval =  $this->ReimbursmentRepositoryStatus->updateAfterApproval($dataMutasiDep->reimbursment_id, $indexApproved, $indexApprovedDept);
+
+                if ($updateAfterApproval || $updateAfterApproval == 1) {
+                    Capsule::commit();
+                    $return = array('message' => '', 'status' => 'success');
+                } else {
+                    Capsule::rollback();
+                    $return = array('message' => 'Something wrong about database', 'status' => 'error');
+                }
+            } catch (\Throwable $th) {
+                Capsule::rollback();
+                $return = array('message' => $th->getMessage(), 'status' => 'error');
+            }
+        } else {
+            $return = $check;
+        }
+        return $return;
     }
     public function reject($item2)
     {
+        $dataMutasiDep = Reimbursment_dept_approval_model_eloquent::find($item2['reimbursment_dept_approval_id']);
+        $check = $this->ReimbursmentRuleAction->approve($dataMutasiDep->reimbursment_id, $dataMutasiDep->department_id, $item2['employee_id']);
+        if ($check['status'] == 'success') {
+            Capsule::beginTransaction();
+            try {
+                $reimbursment_dept_approval_emp_id =  $item2['reimbursment_dept_approval_emp_id'];
+                $Reimbursment_dept_approval_emp_model_eloquent = Reimbursment_dept_approval_emp_model_eloquent::find($reimbursment_dept_approval_emp_id);
+                $Reimbursment_dept_approval_emp_model_eloquent->status =  '-1';
+                $Reimbursment_dept_approval_emp_model_eloquent->save();
+
+                $reimbursment_dept_approval_id = $Reimbursment_dept_approval_emp_model_eloquent->reimbursment_dept_approval_id;
+
+                // find index
+                $indexApproved = $this->getIndexBydata($reimbursment_dept_approval_id, $reimbursment_dept_approval_emp_id);
+
+                // find index dept
+                $indexApprovedDept = $this->getIndexDeptBydata($reimbursment_dept_approval_id, $dataMutasiDep->reimbursment_id);
+
+
+                $afterReject =  $this->ReimbursmentRepositoryStatus->afterReject($dataMutasiDep->reimbursment_id, $indexApproved, $indexApprovedDept);
+                if ($afterReject || $afterReject == 1) {
+                    Capsule::commit();
+                    $return = array('message' => '', 'status' => 'success');
+                } else {
+                    Capsule::rollback();
+                    $return = array('message' => 'Something wrong about database', 'status' => 'error');
+                }
+            } catch (\Throwable $th) {
+                Capsule::rollback();
+                $return = array('message' => $th->getMessage(), 'status' => 'error');
+            }
+        } else {
+            $return = $check;
+        }
+        return $return;
+    }
+
+    public function getIndexDeptBydata($reimbursment_dept_approval_id, $reimbursment_id)
+    {
+
+        $Reimbursment_dept_approval_model_eloquent = Reimbursment_dept_approval_model_eloquent::where('reimbursment_id', $reimbursment_id)->get()->toArray();
+
+        for ($i = 0; $i < count($Reimbursment_dept_approval_model_eloquent); $i++) {
+            if ($reimbursment_dept_approval_id == $Reimbursment_dept_approval_model_eloquent[$i]['reimbursment_dept_approval_id']) {
+                return $i;
+                break;
+            }
+        }
+
+        return false;
+    }
+
+
+    public function getIndexBydata($reimbursment_dept_approval_id, $reimbursment_dept_approval_emp_id)
+    {
+        $Reimbursment_dept_approval_emp_model_eloquent = Reimbursment_dept_approval_emp_model_eloquent::where('reimbursment_dept_approval_id', $reimbursment_dept_approval_id)->get()->toArray();
+
+        for ($i = 0; $i < count($Reimbursment_dept_approval_emp_model_eloquent); $i++) {
+            if ($reimbursment_dept_approval_emp_id == $Reimbursment_dept_approval_emp_model_eloquent[$i]['reimbursment_dept_approval_emp_id']) {
+                return $i;
+                break;
+            }
+        }
+
+        return false;
     }
 
     public function datatable($start, $length, $filter, $order, $tableParam)

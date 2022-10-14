@@ -33,6 +33,7 @@ export default {
     }
   },
   created() {
+    // console.log(this.value);
     if (this.value != "" && this.value != undefined) {
       this.amount = App_template.formatRupiah(this.value);
     }

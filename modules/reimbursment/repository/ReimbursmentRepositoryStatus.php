@@ -20,9 +20,9 @@ class ReimbursmentRepositoryStatus implements ReimbursmentRepositoryStatusInterf
     }
     public function updateStatusFirst($reimbursment_id, $status = '2')
     {
-        $$data = Reimbursment_model_eloquent::find($reimbursment_id);
-        $$data->status = $status;
-        $$data->save();
+        $data = Reimbursment_model_eloquent::find($reimbursment_id);
+        $data->status = $status;
+        $data->save();
     }
 
     public function updateAfterApproval($reimbursment_id, $indexApproved, $indexApprovedDept)
@@ -45,7 +45,7 @@ class ReimbursmentRepositoryStatus implements ReimbursmentRepositoryStatusInterf
                 $dataDeptApproved = $reimbursment_department[$findIndexDeptEmployeeApproved]['approval'];
 
                 // update progress department
-                $updDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_department[$findIndexDeptEmployeeApproved]['reimbursment_dept_reimbursment_dept_approval_emp_id']);
+                $updDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_department[$findIndexDeptEmployeeApproved]['reimbursment_dept_approval_id']);
                 $updDep->status = '2';
                 $updDep->save();
 
@@ -72,8 +72,8 @@ class ReimbursmentRepositoryStatus implements ReimbursmentRepositoryStatusInterf
 
 
                 // check on db if dept approval all is done for employee
-                $mutDeptId = $dataEmpApproved['reimbursment_dept_reimbursment_dept_approval_emp_id'];
-                $d = Reimbursment_dept_approval_emp_model_eloquent::where('status', '!=', '1')->where('reimbursment_dept_reimbursment_dept_approval_emp_id', $mutDeptId)->count();
+                $mutDeptId = $dataEmpApproved['reimbursment_dept_approval_id'];
+                $d = Reimbursment_dept_approval_emp_model_eloquent::where('status', '!=', '1')->where('reimbursment_dept_approval_id', $mutDeptId)->count();
 
                 if ($d > 0 && $nextApprovalEmp) {
                     $dataEmpApprovedNext = $dataDeptApproved[$nextApprovalEmp];
@@ -86,8 +86,8 @@ class ReimbursmentRepositoryStatus implements ReimbursmentRepositoryStatusInterf
 
                     if ($d == 0) {
                         $AllEmpApproved = true;
-                        $reimbursment_dept_reimbursment_dept_approval_emp_id = $dataDeptApproved[0]['reimbursment_dept_reimbursment_dept_approval_emp_id'];
-                        $dataDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_dept_reimbursment_dept_approval_emp_id);
+                        $reimbursment_dept_approval_id = $dataDeptApproved[0]['reimbursment_dept_approval_id'];
+                        $dataDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_dept_approval_id);
                         $dataDep->status = '1';
                         $dataDep->condition = '2';
                         $dataDep->save();
@@ -103,8 +103,8 @@ class ReimbursmentRepositoryStatus implements ReimbursmentRepositoryStatusInterf
 
                 if ($dDept > 0 && $nextApproveDept) {
                     $dataDeptNext = $reimbursment_department[$nextApproveDept];
-                    $reimbursment_dept_reimbursment_dept_approval_emp_id = $dataDeptNext['reimbursment_dept_reimbursment_dept_approval_emp_id'];
-                    $dataDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_dept_reimbursment_dept_approval_emp_id);
+                    $reimbursment_dept_approval_id = $dataDeptNext['reimbursment_dept_approval_id'];
+                    $dataDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_dept_approval_id);
                     $dataDep->status = '0';
                     $dataDep->condition = '1';
                     $dataDep->save();
@@ -200,9 +200,8 @@ class ReimbursmentRepositoryStatus implements ReimbursmentRepositoryStatusInterf
 
             if ($findIndexDeptEmployeeApproved !== null) {
                 $dataDeptApproved = $reimbursment_department[$findIndexDeptEmployeeApproved]['approval'];
-
                 // update progress department
-                $updDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_department[$findIndexDeptEmployeeApproved]['reimbursment_dept_reimbursment_dept_approval_emp_id']);
+                $updDep = Reimbursment_dept_approval_model_eloquent::find($reimbursment_department[$findIndexDeptEmployeeApproved]['reimbursment_dept_approval_id']);
                 $updDep->status = '-1';
                 $updDep->save();
 

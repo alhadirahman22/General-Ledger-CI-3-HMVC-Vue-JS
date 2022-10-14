@@ -329,8 +329,50 @@ export default {
         }
       }
     },
-    async approve() {},
-    async reject() {},
+    async approve(item2) {
+      if (confirm("Are you sure ?")) {
+        const token = jwt_encode(item2, jwtKey);
+        try {
+          this.btnApproval = true;
+          const json = await App_template.AjaxSubmitFormPromises(
+            this.moduledata.module_url + "approve",
+            token
+          );
+
+          if (json.status == "error") {
+            toastr.info(json.msg);
+            this.btnApproval = false;
+          } else {
+            window.location.reload();
+          }
+        } catch (error) {
+          this.btnApproval = false;
+          console.log(error);
+        }
+      }
+    },
+    async reject(item2) {
+      if (confirm("Are you sure ?")) {
+        const token = jwt_encode(item2, jwtKey);
+        try {
+          this.btnApproval = true;
+          const json = await App_template.AjaxSubmitFormPromises(
+            this.moduledata.module_url + "reject",
+            token
+          );
+
+          if (json.status == "error") {
+            toastr.info(json.msg);
+            this.btnApproval = false;
+          } else {
+            window.location.reload();
+          }
+        } catch (error) {
+          this.btnApproval = false;
+          console.log(error);
+        }
+      }
+    },
     async loadShowData() {
       if (typeof this.dataprop.reimbursment_id != "undefined") {
         this.disableInput = true;
@@ -340,11 +382,11 @@ export default {
         this.reimbursment_id = this.dataprop.reimbursment_id;
         this.approvalType =
           this.dataprop.type_approval == "1" ? "Series" : "Paralel";
-        await this.loadApproval();
+        this.value = this.dataprop.value;
         this.date_reimbursment = this.dataprop.date_reimbursment;
         this.requested_by = this.dataprop.requested_by;
-        this.value = this.dataprop.value;
         this.desc = this.dataprop.desc;
+        await this.loadApproval();
       }
     },
     async loadApproval() {

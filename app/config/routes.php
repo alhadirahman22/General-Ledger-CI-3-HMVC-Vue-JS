@@ -27,13 +27,12 @@ $route['administration/approval/(:any)/(:any)'] = 'administration/$1/$2';
 $route['administration/approval/(:any)/(:any)/(:any)'] = 'administration/$1/$2/$3';
 
 
-// master
-// $route['master/(:any)'] = 'master/$1';
-// $route['master/(:any)/(:any)'] = 'master/$1/$2';
-// $route['master/(:any)/(:any)/(:any)'] = 'master/$1/$2/$3';
-// $route['master/(:any)/(:any)/(:any)/(:any)'] = 'master/$1/$2/$3/$4';
-
 $route['master/attribute/(:any)'] = 'master/$1';
 $route['master/attribute/(:any)/(:any)'] = 'master/$1/$2';
 $route['master/attribute/(:any)/(:any)/(:any)'] = 'master/$1/$2/$3';
 // $route['master/attribut/(:any)/(:any)/(:any)'] = 'master/$1/$2/$3/$4';
+
+$route['finance/coa/(:any)'] = 'finance/$1';
+$route['finance/coa/(:any)/(:any)'] = 'finance/$1/$2';
+$route['finance/coa/(:any)/(:any)/(:any)'] = 'finance/$1/$2/$3';
+$route['finance/coa/(:any)/(:any)/(:any)/(:any)'] = 'finance/$1/$2/$3/$4';

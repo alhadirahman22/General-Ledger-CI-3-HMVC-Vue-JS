@@ -476,18 +476,7 @@ class M_master extends CI_Model
             $this->db->where($where);
         }
 
-        $this->db->where('active', 1);
-
-        if ($table == 'museums') {
-            $museums = $this->session->userdata('user')->museums;
-            if (isset($museums) && count($museums) > 0) {
-                $list_museum = array();
-                for ($g = 0; $g < count($museums); $g++) {
-                    array_push($list_museum, $museums[$g]->museum_id);
-                }
-                $this->db->where_in('museum_id', $list_museum);
-            }
-        }
+        // $this->db->where('active', 1);
 
         $d = $this->db->get($table)->result_array();
 

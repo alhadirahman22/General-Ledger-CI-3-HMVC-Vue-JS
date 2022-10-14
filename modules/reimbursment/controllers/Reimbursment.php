@@ -179,4 +179,23 @@ class Reimbursment extends CI_Controller
 
         echo json_encode($dataShow);
     }
+
+    public function reject()
+    {
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+        $item = $dataAll;
+        $dataShow = $this->repository->reject($item);
+        echo json_encode($dataShow);
+    }
+
+    public function approve()
+    {
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+        $item = $dataAll;
+        $dataShow = $this->repository->approve($item);
+
+        echo json_encode($dataShow);
+    }
 }
