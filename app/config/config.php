@@ -43,7 +43,7 @@ $config['encryption_key'] = 'ce9b1275760bb87f0cc24d1bf408b62d';
 
 $config['sess_driver'] = 'database';
 // $config['sess_driver'] = 'files';
-$config['sess_cookie_name'] = 'MuseumERP_TOP_session';
+$config['sess_cookie_name'] = 'SanaySys_session';
 $config['sess_expiration'] = 7200;
 // $config['sess_save_path'] = APPPATH . 'sessions/';
 // $config['sess_save_path'] = './sessions';
