@@ -9,7 +9,13 @@
 			</a>
 			<b class="arrow"></b>
 		</li>
-
+		<li data-name="Mytask" class="<?php echo menu_active('mytask', false); ?>">
+			<a href="<?= base_url('mytask'); ?>" class="faa-parent animated-hover">
+				<i class="menu-icon fa fa-paper-plane faa-shake"></i>
+				<span class="menu-text"> My Task </span>
+			</a>
+			<b class="arrow"></b>
+		</li>
 
 		<?php if ($this->aauth->is_allowed('administration')) : ?>
 			<li data-name="Administration" class="<?php echo menu_active('administration', false); ?>">

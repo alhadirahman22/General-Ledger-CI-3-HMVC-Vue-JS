@@ -44,6 +44,7 @@ Vue.component('adm-employee', require('./components/admnistration/Employee.vue')
 Vue.component('clear-log', require('./components/admnistration/auditTrails/clearLog.vue').default);
 Vue.component('approval-settings', require('./components/admnistration/approval/ApprovalSettings.vue').default);
 Vue.component('reimbursment-form', require('./components/reimbursment/ReimbursmentForm.vue').default);
+Vue.component('gl-form', require('./components/finance/GLForm.vue').default);
 
 
 // Main Component
