@@ -2,6 +2,7 @@
 
 namespace Modules\finance\repository\coa;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Modules\finance\models\Coa_group_model_eloquent;
 
 class CoaGroupRepository
@@ -76,8 +77,8 @@ class CoaGroupRepository
         } else {
             $data['updated_at'] =  Date('Y-m-d H:i:s');
             $data['updated_by'] =  $this->CI->data['user']->id;
-            $this->db->where('fin_coa_group_id', $data['fin_coa_group_id']);
-            $this->db->update($this->table, $data);
+            $this->CI->db->where('fin_coa_group_id', $data['fin_coa_group_id']);
+            $this->CI->db->update($this->CI->table, $data);
         }
         $return = array('message' => sprintf(lang('save_success'), lang('heading') . ' ' . $data['fin_coa_group_name']), 'status' => 'success');
 
@@ -99,9 +100,89 @@ class CoaGroupRepository
 
     public function datatable($start, $length, $filter, $order, $tableParam)
     {
+        $columns = isset($tableParam) ? $tableParam['columns'] : [];
+        $datas = new Coa_group_model_eloquent;
+        $datas = $datas->join('fin_coa_aktiva_passiva_sub', 'fin_coa_aktiva_passiva_sub.fin_coa_aktiva_passiva_sub_id', '=', 'fin_coa_group.fin_coa_aktiva_passiva_sub_id')->join('fin_coa_aktiva_passiva', 'fin_coa_aktiva_passiva.fin_coa_aktiva_passiva_id', '=', 'fin_coa_aktiva_passiva_sub.fin_coa_aktiva_passiva_id')
+            ->select(
+                'fin_coa_group.fin_coa_group_id',
+                'fin_coa_group.fin_coa_group_code',
+                'fin_coa_group.fin_coa_group_name',
+                'fin_coa_group.created_at',
+                'fin_coa_group.created_by',
+                'fin_coa_aktiva_passiva_sub.name as NameCoaPassivaSub',
+                'fin_coa_aktiva_passiva.name as NameCoaAktivaPassiva',
+            );
+        if ($filter) {
+            $datas = $datas->where(function ($query) use ($filter, $columns) {
+                foreach ($filter as $column => $value) {
+                    if (!empty($value)) {
+                        $query->where($columns[$column]['name'], 'like', '' . $value . '%');
+                    }
+                }
+            });
+        }
+
+        $recordsFiltered = $datas;
+        $countFiltered = $recordsFiltered->count();
+        // order
+        if ($order) {
+            $order['column'] = $columns[$order['column']]['name'];
+            $datas = $datas->orderByRaw($order['column'] . ' ' . $order['dir']);
+        }
+
+        $datas = $datas->offset($start)
+            ->limit($length);
+
+        $datas = $datas->get();
+        return ['dataRaw' => $datas, 'recordsTotal' => Coa_group_model_eloquent::count(), 'recordsFiltered' => $countFiltered];
     }
 
     public function setOutputDatatable($get_data, $draw)
     {
+        $output = $get_data;
+        $output['data'] = array();
+        if (count($get_data['dataRaw']) > 0) {
+            $dataRaw = $get_data['dataRaw']->toArray();
+            for ($i = 0; $i < count($dataRaw); $i++) {
+                $payload = array(
+                    'id' => $dataRaw[$i]['fin_coa_group_id']
+                );
+                $encry = get_jwt_encryption($payload);
+                $output['data'][] = array(
+                    $dataRaw[$i]['fin_coa_group_id'],
+                    $dataRaw[$i]['fin_coa_group_code'],
+                    $dataRaw[$i]['fin_coa_group_name'],
+                    $dataRaw[$i]['NameCoaAktivaPassiva'] . ' - ' . $dataRaw[$i]['NameCoaPassivaSub'],
+                    get_date_time($dataRaw[$i]['created_at']) . ' <br/>' . $this->CI->m_master->get_username_by($dataRaw[$i]['created_by']),
+                    '<div class = "action-buttons">' .
+                        ($this->CI->aauth->is_allowed($this->CI->perm . '/edit') ? '<a class="' . lang('button_edit_class') . '" title="' . lang('edit') . '" href="' . $this->CI->data['module_url'] . 'form/' . $encry . '">' . lang('button_edit') . '</a>' : '') .
+                        '&nbsp  ' .
+                        ($this->CI->aauth->is_allowed($this->CI->perm . '/delete') ? '<a tabindex="-1" title="' . lang('delete') . '" class="' . lang('button_delete_class') . ' delete_row_default" href="' . $this->CI->data['module_url'] . 'delete/' . $encry . '">' . lang('button_delete') . '</a>' : '') .
+                        '</div>'
+                );
+            }
+        }
+        $output['draw'] = $draw++;
+
+        return $output;
+    }
+
+    public function delete($id)
+    {
+        $fin_coa_group_id = $id;
+        Capsule::beginTransaction();
+        try {
+            $data = Coa_group_model_eloquent::find($fin_coa_group_id);
+
+            $data->delete();
+
+            Capsule::commit();
+            $return = ['message' => sprintf(lang('delete_success'), lang('heading')), 'status' => 'success'];
+        } catch (\Throwable $th) {
+            Capsule::rollback();
+            $return = array('message' => $th->getMessage(), 'status' => 'error');
+        }
+
+        return $return;
     }
 }

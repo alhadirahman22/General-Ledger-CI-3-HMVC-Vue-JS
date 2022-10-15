@@ -22,10 +22,10 @@ class Coa_group extends CI_Controller // Non Dispersi
         $this->midlleware = new CoaGroupMiddleware();
         $this->data['table'] = [
             'columns' => [
-                '0' => ['name' => 'fin_coa_group_id', 'title' => 'ID', 'filter' => false, 'class' => 'text-center default-sort', 'sort' => 'desc'],
-                '1' => ['name' => 'fin_coa_group_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
-                '2' => ['name' => 'fin_coa_group_name', 'title' => 'Name', 'filter' => ['type' => 'text']],
-                '3' => ['name' => 'type', 'title' => 'Grouping', 'filter' => false, 'class' => 'no-sort'],
+                '0' => ['name' => 'fin_coa_group.fin_coa_group_id', 'title' => 'ID', 'filter' => false, 'class' => 'text-center default-sort', 'sort' => 'desc'],
+                '1' => ['name' => 'fin_coa_group.fin_coa_group_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
+                '2' => ['name' => 'fin_coa_group.name', 'title' => 'Name', 'filter' => ['type' => 'text']],
+                '3' => ['name' => 'fin_coa_aktiva_passiva_sub.name', 'title' => 'Grouping', 'filter' => false, 'class' => 'no-sort'],
                 '4' => ['name' => 'created_by', 'title' => 'Created', 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
@@ -109,5 +109,20 @@ class Coa_group extends CI_Controller // Non Dispersi
         $get_data = $this->repository->datatable($start, $length, $filter, $order, $this->data['table']);
         $output = $this->repository->setOutputDatatable($get_data, $draw);
         echo json_encode($output);
+    }
+
+    public function delete($token)
+    {
+        $dataToken = get_jwt_decryption($token);
+        $id = $dataToken->id;
+        $rule = $this->midlleware->ruleEditDelete($id);
+        if ($rule['status'] == 'success') {
+            $delete = $this->repository->delete($id);
+            $return = ['message' => sprintf(lang('delete_success'), lang('heading')), 'status' => 'success'];
+        } else {
+            $return = $rule;
+        }
+
+        echo json_encode($return);
     }
 }

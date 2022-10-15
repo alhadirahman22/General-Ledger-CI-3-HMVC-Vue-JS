@@ -5,6 +5,7 @@ namespace Modules\finance\models;
 defined('BASEPATH') or exit('No direct script access allowed');
 
 
+use Modules\finance\models\Coa_model_eloquent;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 class Coa_group_model_eloquent extends Eloquent
