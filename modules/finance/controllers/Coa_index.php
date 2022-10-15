@@ -22,20 +22,20 @@ class Coa_index extends CI_Controller // Non Dispersi
         $this->midlleware = new CoaMiddleware();
         $this->data['table'] = [
             'columns' => [
-                '0' => ['name' => 'fin_coa_id', 'title' => 'ID', 'filter' => false, 'class' => 'text-center default-sort', 'sort' => 'desc'],
-                '1' => ['name' => 'fin_coa_group_id', 'title' => 'Group', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
-                '2' => ['name' => 'fin_coa_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
-                '3' => ['name' => 'fin_coa_name', 'title' => 'Name', 'filter' => ['type' => 'text']],
-                '4' => ['name' => 'type', 'title' => 'Type', 'class' => 'text-center', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', 'D' => 'Debit', 'C' => 'Credit']]],
-                '5' => ['name' => 'status', 'class' => 'text-center', 'title' => 'Aktif', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', 'A' => 'Y', 'T' => 'N']]],
-                '6' => ['name' => 'type', 'class' => 'text-center', 'title' => 'Grouping', 'filter' => false, 'class' => 'no-sort'],
-                '7' => ['name' => 'created_by', 'title' => 'Created', 'filter' => false, 'class' => 'no-sort'],
+                '0' => ['name' => 'fin_coa.fin_coa_id', 'title' => 'ID', 'filter' => false, 'class' => 'text-center default-sort', 'sort' => 'desc'],
+                '1' => ['name' => 'fin_coa_group.fin_coa_group_code', 'title' => 'Group', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
+                '2' => ['name' => 'fin_coa.fin_coa_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
+                '3' => ['name' => 'fin_coa.fin_coa_name', 'title' => 'Name', 'filter' => ['type' => 'text']],
+                '4' => ['name' => 'fin_coa.type', 'title' => 'Type', 'class' => 'text-center', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', 'D' => 'Debit', 'C' => 'Credit']]],
+                '5' => ['name' => 'fin_coa.status', 'class' => 'text-center', 'title' => 'Aktif', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', 'A' => 'Y', 'T' => 'N']]],
+                '6' => ['name' => 'fin_coa_aktiva_passiva_sub.name', 'class' => 'text-center', 'title' => 'Grouping', 'filter' => false, 'class' => 'no-sort'],
+                '7' => ['name' => 'fin_coa.created_by', 'title' => 'Created', 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
         ];
 
         if ($this->aauth->is_allowed($this->perm . '/edit') || ($this->aauth->is_allowed($this->perm . '/delete'))) {
-            $this->data['table']['columns']['8'] = ['name' => 'fin_coa_id', 'title' => '', 'class' => 'no-sort text-center', 'width' => '7%', 'filter' => ['type' => 'action']];
+            $this->data['table']['columns']['8'] = ['name' => 'fin_coa_id', 'title' => '', 'class' => 'no-sort text-center', 'width' => '15%', 'filter' => ['type' => 'action']];
         }
 
         $this->data['filter_name'] = 'table_filter_finance_coa';
@@ -94,6 +94,37 @@ class Coa_index extends CI_Controller // Non Dispersi
             $this->session->set_flashdata('form_response_status', $return['status']);
             $this->session->set_flashdata('form_response_message', $return['message']);
         }
+        echo json_encode($return);
+    }
+
+    public function get_list()
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $start = $this->input->post('start');
+        $length = $this->input->post('length');
+        $order = $this->input->post('order')[0];
+        $draw = intval($this->input->post('draw'));
+        $filter = $this->input->post('filter');
+        $this->session->set_userdata($this->data['filter_name'], $filter);
+        $output['data'] = array();
+
+        $get_data = $this->repository->datatable($start, $length, $filter, $order, $this->data['table']);
+        $output = $this->repository->setOutputDatatable($get_data, $draw);
+        echo json_encode($output);
+    }
+
+    public function delete($token)
+    {
+        $dataToken = get_jwt_decryption($token);
+        $id = $dataToken->id;
+        $rule = $this->midlleware->ruleEditDelete($id);
+        if ($rule['status'] == 'success') {
+            $delete = $this->repository->delete($id);
+            $return = ['message' => sprintf(lang('delete_success'), lang('heading')), 'status' => 'success'];
+        } else {
+            $return = $rule;
+        }
+
         echo json_encode($return);
     }
 }
