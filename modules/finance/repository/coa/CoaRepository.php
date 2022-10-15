@@ -168,7 +168,7 @@ class CoaRepository
             ->limit($length);
 
         $datas = $datas->get();
-        return ['dataRaw' => $datas, 'recordsTotal' => Coa_group_model_eloquent::count(), 'recordsFiltered' => $countFiltered];
+        return ['dataRaw' => $datas, 'recordsTotal' => Coa_model_eloquent::count(), 'recordsFiltered' => $countFiltered];
     }
 
     public function setOutputDatatable($get_data, $draw)
