@@ -47,6 +47,7 @@ Vue.component('reimbursment-form', require('./components/reimbursment/Reimbursme
 Vue.component('gl-form', require('./components/finance/GLForm.vue').default);
 
 
+
 // Main Component
 Vue.component('range-date', require('./components/main/RangeDate.vue').default);
 Vue.component('input-currency', require('./components/main/InputCurrency.vue').default);

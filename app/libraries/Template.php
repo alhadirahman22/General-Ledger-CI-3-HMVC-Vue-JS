@@ -37,6 +37,7 @@ class Template
 
         $this->ci->load->css('assets/css/daterangepicker.min.css');
         $this->ci->load->css('assets/css/custom.css');
+        $this->ci->load->css('public/css/custom.css'); // vue CLI
 
         $this->ci->load->js('assets/jwt/encode/hmac-sha256.js');
         $this->ci->load->js('assets/jwt/encode/enc-base64-min.js');

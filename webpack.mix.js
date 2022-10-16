@@ -13,6 +13,7 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .js('resources/js/widget.js', 'public/js')
+    .sass('resources/sass/custom.scss', 'public/css')
     .setPublicPath('public')
     .options({
         processCssUrls: false
