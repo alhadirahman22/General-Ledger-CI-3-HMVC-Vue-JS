@@ -68,7 +68,17 @@ class MainRepository
         $op = [];
         $ex = explode('-', $text);
         for ($i = 0; $i < count($data); $i++) {
-            $textshow = count($ex) > 0 ?  $data[$i][$ex[0]] . ' - ' . $data[$i][$ex[1]] : $data[$i][$text];
+            // $textshow = count($ex) > 0 ?  $data[$i][$ex[0]] . ' - ' . $data[$i][$ex[1]] : $data[$i][$text];
+
+            if (count($ex) > 0) {
+                $textshow = $data[$i][$ex[0]];
+                for ($k = 1; $k < count($ex); $k++) {
+                    $textshow .= ' - ' . $data[$i][$ex[$k]];
+                }
+            } else {
+                $textshow = $data[$i][$text];
+            }
+
             $temp = ['id' => $data[$i][$id], 'text' => $textshow];
 
             $op[] = $temp;
@@ -85,7 +95,16 @@ class MainRepository
 
         $op = [];
         for ($i = 0; $i < count($datas); $i++) {
-            $textshow = count($ex) > 0 ?  $datas[$i][$ex[0]] . ' - ' . $datas[$i][$ex[1]] : $datas[$i][$text];
+            // $textshow = count($ex) > 0 ?  $datas[$i][$ex[0]] . ' - ' . $datas[$i][$ex[1]] : $datas[$i][$text];
+
+            if (count($ex) > 0) {
+                $textshow = $datas[$i][$ex[0]];
+                for ($k = 1; $k < count($ex); $k++) {
+                    $textshow .= ' - ' . $datas[$i][$ex[$k]];
+                }
+            } else {
+                $textshow = $datas[$i][$text];
+            }
             $temp = ['id' => $datas[$i][$id], 'text' => $textshow];
 
             $op[] = $temp;

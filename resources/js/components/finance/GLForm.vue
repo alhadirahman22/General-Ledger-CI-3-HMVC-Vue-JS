@@ -65,7 +65,9 @@
               <div class="row">
                 <div class="col-xs-12">
                   <div style="padding: 15px">
-                    <button class="btn btn-sm btn-secondary">Add Coa</button>
+                    <button class="btn btn-sm btn-secondary" @click="addCoa">
+                      Add Coa
+                    </button>
                   </div>
                   <table class="table tblmax-height">
                     <thead>
@@ -77,7 +79,69 @@
                         <th>Action</th>
                       </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                      <tr v-for="(item, index) in form.detail" :key="index">
+                        <td>
+                          <Select2
+                            :options="coaOptions"
+                            placeholder="Pilih Coa"
+                            v-model="form.detail[index]['fin_coa_id']"
+                            name="fin_coa_id"
+                          />
+                          <!-- <div style="display: flex">
+                            <span style="color: red">{{
+                              form.detail[index]["ref"]["name_coa_show"]
+                            }}</span>
+                            &nbsp
+                            <span style="color: red"
+                              >({{
+                                form.detail[index]["ref"]["coa_type"]
+                              }})</span
+                            >
+                          </div> -->
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control"
+                            v-model="form.detail[index]['fin_gl_referensi']"
+                            placeholder="Input Referensi"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            class="form-control"
+                            v-model="form.detail[index]['debit']"
+                            placeholder="Input Debit"
+                          />
+                          <span style="color: red; font-weight: bold">{{
+                            debitShow(index)
+                          }}</span>
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            class="form-control"
+                            v-model="form.detail[index]['credit']"
+                            placeholder="Input Credit"
+                          />
+                          <span style="color: green; font-weight: bold">{{
+                            creditShow(index)
+                          }}</span>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            @click="deleteRow(index)"
+                            v-if="status != '1'"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -139,6 +203,19 @@ export default {
       mountedSet: false,
       isLoadingBukti: false,
       fin_gl_no_bukti: [],
+      form: {
+        fin_gl_id: null,
+        fin_jurnal_voucher_id: null,
+        fin_gl_prefix: "GL-",
+        fin_gl_code: null,
+        fin_gl_date: null,
+        fin_gl_code_inc: null,
+        fin_gl_no_bukti: null,
+        detail: [],
+      },
+      detailDeleted: [],
+      coaOptions: [],
+      status: null,
     };
   },
   methods: {
@@ -193,11 +270,76 @@ export default {
         this.jurnalOptions = myOptions;
       }
     },
-    async noBukti() {},
+    async coaOption() {
+      const res = await axios.get(base_url + "main/optionModels", {
+        params: {
+          id: "fin_coa_id",
+          text: "fin_coa_code-fin_coa_name-type",
+          eloquent: "Modules\\finance\\models\\Coa_model_eloquent",
+        },
+      });
+      if (res.data.success) {
+        let dataRest = res.data.data;
+        let myOptions = [];
+        for (let index = 0; index < dataRest.length; index++) {
+          const temp = {
+            id: dataRest[index].id,
+            text: dataRest[index].text,
+          };
+          myOptions.push(temp);
+        }
+        this.coaOptions = myOptions;
+      }
+    },
+    addCoa() {
+      const temp = {
+        fin_gl_detail_id: null,
+        fin_gl_id: this.form.fin_gl_id,
+        fin_coa_id: null,
+        fin_gl_referensi: null,
+        debit: 0,
+        credit: 0,
+        desc: null,
+        ref: {
+          name_coa_show: null,
+          coa_type: null,
+          code: null,
+        },
+      };
+
+      this.form.detail.push(temp);
+    },
+    deleteRow(index) {
+      const d = this.detailDeleted.filter(
+        (x) =>
+          parseInt(x.fin_gl_detail_id) ===
+          parseInt(this.form.detail[index]["fin_gl_detail_id"])
+      );
+      if (!d.length) {
+        this.detailDeleted.push(this.form.detail[index]);
+      }
+
+      this.form.detail = this.form.detail.filter((x, i) => i !== index);
+    },
+    format_money_other(bilangan) {
+      bilangan = parseFloat(bilangan);
+      return bilangan.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+    },
   },
   async created() {
     await this.jurnalOption();
+    await this.coaOption();
     this.mountedSet = true;
+  },
+  computed: {
+    debitShow() {
+      return (index) =>
+        this.format_money_other(this.form.detail[index]["debit"]);
+    },
+    creditShow() {
+      return (index) =>
+        this.format_money_other(this.form.detail[index]["credit"]);
+    },
   },
 };
 </script>
