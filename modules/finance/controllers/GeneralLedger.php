@@ -1,5 +1,6 @@
 <?php
 
+use Composer\Autoload\ClassLoader;
 use Modules\finance\midlleware\GLMidlleware;
 use Modules\finance\repository\GLRepository;
 
@@ -89,5 +90,24 @@ class GeneralLedger extends CI_Controller // Non Dispersi
         $this->data['iconBtn'] =  $this->m_master->encodeToPropVue($iconBtn);
         $this->data['moduleData'] =  $this->m_master->encodeToPropVue($moduleData);
         $this->load->view('gl_form', $this->data);
+    }
+
+    public function draft()
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+        $validation = $this->midlleware->validation($dataAll);
+
+        if ($validation['status'] == 'success') {
+        } else {
+            $return = $validation;
+        }
+
+        if (isset($return['redirect'])) {
+            $this->session->set_flashdata('form_response_status', $return['status']);
+            $this->session->set_flashdata('form_response_message', $return['message']);
+        }
+        echo json_encode($return);
     }
 }

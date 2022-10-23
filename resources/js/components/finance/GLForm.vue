@@ -11,25 +11,14 @@
                 class="form-control"
                 disabled
                 placeholder="Auto by system"
+                v-model="form.fin_gl_code"
               />
             </div>
           </div>
           <div class="col-xs-3">
             <div class="form-group">
               <label> No Bukti</label>
-              <!-- <multiselect
-                :options="buktiOptions"
-                :multiple="false"
-                label="text"
-                @select="onSelectBukti($event)"
-                :track-by="'code'"
-                @remove="toggleUnBukti($event)"
-                @tag="addTag"
-                placeholder="Search or add no Bukti"
-              >
-              </multiselect> -->
               <multiselect
-                v-model="fin_gl_no_bukti"
                 id="ajax"
                 label="text"
                 track-by="code"
@@ -41,6 +30,8 @@
                 @search-change="asyncFind"
                 @tag="addTag"
                 :taggable="true"
+                :disabled="status >= 0"
+                v-model="form.fin_gl_no_bukti"
               >
               </multiselect>
             </div>
@@ -48,13 +39,23 @@
           <div class="col-xs-3">
             <div class="form-group">
               <label> Trans Date</label>
-              <input type="date" class="form-control" />
+              <input
+                type="date"
+                class="form-control"
+                :disabled="status >= 0"
+                v-model="form.fin_gl_date"
+              />
             </div>
           </div>
           <div class="col-xs-3">
             <div class="form-group">
               <label> Jurnal Voucher</label>
-              <Select2 :options="jurnalOptions" placeholder="Pilih Jurnal" />
+              <Select2
+                :options="jurnalOptions"
+                placeholder="Pilih Jurnal"
+                :disabled="status >= 0"
+                v-model="form.fin_jurnal_voucher_id"
+              />
             </div>
           </div>
         </div>
@@ -65,7 +66,11 @@
               <div class="row">
                 <div class="col-xs-12">
                   <div style="padding: 15px">
-                    <button class="btn btn-sm btn-secondary" @click="addCoa">
+                    <button
+                      class="btn btn-sm btn-secondary"
+                      @click="addCoa"
+                      :disabled="status >= 0"
+                    >
                       Add Coa
                     </button>
                   </div>
@@ -87,6 +92,7 @@
                             placeholder="Pilih Coa"
                             v-model="form.detail[index]['fin_coa_id']"
                             name="fin_coa_id"
+                            :disabled="status >= 0"
                           />
                           <!-- <div style="display: flex">
                             <span style="color: red">{{
@@ -106,6 +112,7 @@
                             class="form-control"
                             v-model="form.detail[index]['fin_gl_referensi']"
                             placeholder="Input Referensi"
+                            :disabled="status >= 0"
                           />
                         </td>
                         <td>
@@ -114,8 +121,11 @@
                             class="form-control"
                             v-model="form.detail[index]['debit']"
                             placeholder="Input Debit"
-                            v-on:keyup="onValidate($event, index, 'C')"
-                            :disabled="disSet(index, 'credit')"
+                            v-on:keyup="onValidate($event, index, 'credit')"
+                            :disabled="
+                              form.detail[index]['ref']['disabled'] ==
+                                'debit' || status >= 0
+                            "
                           />
                           <span style="color: red; font-weight: bold">{{
                             debitShow(index)
@@ -128,6 +138,10 @@
                             v-model="form.detail[index]['credit']"
                             placeholder="Input Credit"
                             v-on:keyup="onValidate($event, index, 'debit')"
+                            :disabled="
+                              form.detail[index]['ref']['disabled'] ==
+                                'credit' || status >= 0
+                            "
                           />
                           <span style="color: green; font-weight: bold">{{
                             creditShow(index)
@@ -202,7 +216,14 @@
           <a class="btn btn-purple" v-html="iconbtn.cancel_w_icon"> </a>
         </div>
         <div class="pull-right">
-          <button type="button" class="btn btn-primary">Draft</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            v-if="status == -1"
+            @click="onDraft"
+          >
+            Draft
+          </button>
         </div>
       </div>
     </div>
@@ -236,7 +257,7 @@ export default {
       },
       detailDeleted: [],
       coaOptions: [],
-      status: null,
+      status: -1,
       ref: {
         jurnal_voucher_name_show: null,
         totalCredit: 0,
@@ -248,9 +269,13 @@ export default {
   methods: {
     // onSelectBukti({ id, text }) {},
     // toggleUnBukti({ id, text }) {},
-    onValidate(e, index, typeToChg) {
+
+    onValidate(e, index, type) {
       const v = e.target.value;
       if (v > 0) {
+        this.form.detail[index].ref.disabled = type;
+      } else {
+        this.form.detail[index].ref.disabled = false;
       }
     },
     limitText(count) {
@@ -336,6 +361,7 @@ export default {
           name_coa_show: null,
           coa_type: null,
           code: null,
+          disabled: false,
         },
       };
 
@@ -356,6 +382,52 @@ export default {
     format_money_other(bilangan) {
       bilangan = parseFloat(bilangan);
       return bilangan.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+    },
+    async onDraft() {
+      if (this.ref.totalCredit > 0 || this.ref.totalDebit > 0) {
+        // if (parseFloat(this.ref.selisih) == 0) {
+        if (true) {
+          const url = this.moduledata.module_url + "draft";
+          let form = this.form;
+          form["debit_total"] = this.ref.totalDebit;
+          form["credit_total"] = this.ref.totalCredit;
+          form["selisih_total"] = this.ref.selisih;
+          const PostData = {
+            form: this.form,
+            detailDeleted: this.detailDeleted,
+          };
+          const token = jwt_encode(PostData, jwtKey);
+          if (confirm("Are you sure ?")) {
+            App_template.loadingStart();
+            try {
+              const json = await App_template.AjaxSubmitFormPromises(
+                url,
+                token
+              );
+              App_template.response_form_token(json);
+            } catch (err) {
+              console.log(err);
+            } finally {
+              await App_template.timeout(1000);
+              App_template.loadingEnd(0);
+            }
+          }
+        } else {
+          this.$swal({
+            title: "Alert",
+            html: "Please check balance",
+            type: "info",
+            confirmButtonText: "OK",
+          }).then(function () {});
+        }
+      } else {
+        this.$swal({
+          title: "Alert",
+          html: "Debit & Credit is required",
+          type: "info",
+          confirmButtonText: "OK",
+        }).then(function () {});
+      }
     },
   },
   async created() {

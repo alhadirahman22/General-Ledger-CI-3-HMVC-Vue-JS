@@ -2,6 +2,7 @@
 
 namespace Modules\finance\midlleware;
 
+use Modules\finance\rule\GLSubscriptionValidator;
 
 
 class GLMidlleware
@@ -10,8 +11,10 @@ class GLMidlleware
     protected $CI;
     protected $table;
     protected $table_id_key;
+    protected $validatorRule;
     public function __construct()
     {
+        $this->validatorRule = new GLSubscriptionValidator;
         $this->CI = &get_instance();
         $this->table = 'fin_gl';
         $this->table_id_key = 'fin_gl_id';
@@ -35,5 +38,24 @@ class GLMidlleware
         }
 
         return ['data' => $data, 'id' => $id];
+    }
+
+    public function validation($dataAll)
+    {
+        $return = array('message' => '', 'status' => 'error');
+
+        $dataToken = $dataAll['form'];
+        $dataTokenDetail = $dataToken['detail'];
+        unset($dataToken['detail']);
+        $isValid = $this->validatorRule->assert($dataTokenDetail);
+        if (!$isValid) {
+            print_r($this->validatorRule->errors);
+        }
+        die();
+
+
+
+
+        return $return;
     }
 }
