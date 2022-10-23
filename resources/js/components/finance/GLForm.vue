@@ -114,6 +114,8 @@
                             class="form-control"
                             v-model="form.detail[index]['debit']"
                             placeholder="Input Debit"
+                            v-on:keyup="onValidate($event, index, 'C')"
+                            :disabled="disSet(index, 'credit')"
                           />
                           <span style="color: red; font-weight: bold">{{
                             debitShow(index)
@@ -125,6 +127,7 @@
                             class="form-control"
                             v-model="form.detail[index]['credit']"
                             placeholder="Input Credit"
+                            v-on:keyup="onValidate($event, index, 'debit')"
                           />
                           <span style="color: green; font-weight: bold">{{
                             creditShow(index)
@@ -170,7 +173,25 @@
                         <td><span style="color: blue">Selisih</span></td>
                       </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                      <tr>
+                        <td rowspan="2">Sub Total</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2"></td>
+                        <td>
+                          <span style="color: red">{{ totalDebit }}</span>
+                        </td>
+                        <td>
+                          <span style="color: green">{{ totalCredit }}</span>
+                        </td>
+                        <td>
+                          <span style="color: blue">{{
+                            selishDebitCredit
+                          }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -216,11 +237,22 @@ export default {
       detailDeleted: [],
       coaOptions: [],
       status: null,
+      ref: {
+        jurnal_voucher_name_show: null,
+        totalCredit: 0,
+        totalDebit: 0,
+        selisih: 0,
+      },
     };
   },
   methods: {
     // onSelectBukti({ id, text }) {},
     // toggleUnBukti({ id, text }) {},
+    onValidate(e, index, typeToChg) {
+      const v = e.target.value;
+      if (v > 0) {
+      }
+    },
     limitText(count) {
       return `and ${count} Bukti`;
     },
@@ -339,6 +371,37 @@ export default {
     creditShow() {
       return (index) =>
         this.format_money_other(this.form.detail[index]["credit"]);
+    },
+    totalDebit() {
+      var msgTotal = this.form.detail.reduce(function (prev, cur) {
+        return parseFloat(prev) + parseFloat(cur.debit);
+      }, 0);
+      msgTotal = parseFloat(msgTotal);
+      this.ref.totalDebit = msgTotal;
+      return this.format_money_other(msgTotal);
+    },
+    totalCredit() {
+      var msgTotal = this.form.detail.reduce(function (prev, cur) {
+        return parseFloat(prev) + parseFloat(cur.credit);
+      }, 0);
+      msgTotal = parseFloat(msgTotal);
+      this.ref.totalCredit = msgTotal;
+      return this.format_money_other(msgTotal);
+    },
+    selishDebitCredit() {
+      var msgTotal1 = this.form.detail.reduce(function (prev, cur) {
+        return parseFloat(prev) + parseFloat(cur.debit);
+      }, 0);
+      msgTotal1 = parseFloat(msgTotal1);
+
+      var msgTotal2 = this.form.detail.reduce(function (prev, cur) {
+        return parseFloat(prev) + parseFloat(cur.credit);
+      }, 0);
+      msgTotal2 = parseFloat(msgTotal2);
+      var msgTotal = msgTotal1 - msgTotal2;
+      this.ref.selisih = msgTotal;
+
+      return this.format_money_other(msgTotal);
     },
   },
 };
