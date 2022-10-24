@@ -14,7 +14,7 @@ class GLMidlleware
     protected $validatorRule;
     public function __construct()
     {
-        $this->validatorRule = new GLSubscriptionValidator;
+        $this->validatorRule = new GLSubscriptionValidator();
         $this->CI = &get_instance();
         $this->table = 'fin_gl';
         $this->table_id_key = 'fin_gl_id';
@@ -42,17 +42,20 @@ class GLMidlleware
 
     public function validation($dataAll)
     {
-        $return = array('message' => '', 'status' => 'error');
+        $return = array('message' => '', 'status' => 'success');
 
         $dataToken = $dataAll['form'];
         $dataTokenDetail = $dataToken['detail'];
         unset($dataToken['detail']);
         $isValid = $this->validatorRule->assert($dataTokenDetail);
         if (!$isValid) {
-            print_r($this->validatorRule->errors);
+            $return = array('message' => $this->validatorRule->extractErrors(), 'status' => 'error');
+        } else {
+            $isValid2 = $this->validatorRule->assert2($dataToken);
+            if (!$isValid2) {
+                $return = array('message' => $this->validatorRule->extractErrors(), 'status' => 'error');
+            }
         }
-        die();
-
 
 
 

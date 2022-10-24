@@ -93,18 +93,13 @@
                             v-model="form.detail[index]['fin_coa_id']"
                             name="fin_coa_id"
                             :disabled="status >= 0"
+                            @select="onSelectCoa($event, index)"
                           />
-                          <!-- <div style="display: flex">
+                          <div style="display: flex">
                             <span style="color: red">{{
                               form.detail[index]["ref"]["name_coa_show"]
                             }}</span>
-                            &nbsp
-                            <span style="color: red"
-                              >({{
-                                form.detail[index]["ref"]["coa_type"]
-                              }})</span
-                            >
-                          </div> -->
+                          </div>
                         </td>
                         <td>
                           <input
@@ -267,7 +262,9 @@ export default {
     };
   },
   methods: {
-    // onSelectBukti({ id, text }) {},
+    onSelectCoa({ id, text }, index) {
+      this.form.detail[index]["ref"]["name_coa_show"] = text;
+    },
     // toggleUnBukti({ id, text }) {},
 
     onValidate(e, index, type) {
@@ -385,8 +382,8 @@ export default {
     },
     async onDraft() {
       if (this.ref.totalCredit > 0 || this.ref.totalDebit > 0) {
-        // if (parseFloat(this.ref.selisih) == 0) {
-        if (true) {
+        if (parseFloat(this.ref.selisih) == 0) {
+          // if (true) {
           const url = this.moduledata.module_url + "draft";
           let form = this.form;
           form["debit_total"] = this.ref.totalDebit;

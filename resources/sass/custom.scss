@@ -16,8 +16,22 @@
     }
 }
 
-.tblmax-height {
-    max-height: 400px;
+.tblmax-height tbody {
+    display: block;
+    height: 250px;
+    overflow: auto;
+}
+
+.tblmax-height thead,
+.tblmax-height tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    /* even columns width , fix width of table too*/
+}
+
+.tblmax-height thead {
+    width: calc( 100% - 1em) scrollbar is average 1em/16px width, remove it from thead width
 }
 
 .footer-content-desh .table {
