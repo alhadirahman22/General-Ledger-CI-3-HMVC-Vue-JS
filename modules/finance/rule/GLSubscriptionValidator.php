@@ -2,11 +2,12 @@
 
 namespace Modules\finance\rule;
 
-use \Respect\Validation\Validator as V;
-use \Respect\Validation\Exceptions\NestedValidationException;
-
-
 use Illuminate\Support\Arr;
+use \Respect\Validation\Validator as V;
+
+
+use Modules\main\repository\MainRepository;
+use \Respect\Validation\Exceptions\NestedValidationException;
 
 // $array = ['products' => ['desk' => ['price' => 100]]];
 
@@ -112,8 +113,43 @@ class GLSubscriptionValidator
                 }
             }
         }
-        $this->atLeastTwoCoa($inputs);
+        $atLeastTwoCoa = $this->atLeastTwoCoa($inputs);
+        if (!$atLeastTwoCoa) {
+            return false;
+        }
+
         return  $this->atBalance($inputs);
+    }
+
+    public function checkPay(array $inputs)
+    {
+        $fin_gl_no_bukti = $inputs['fin_gl_no_bukti']['code'];
+        if (substr($fin_gl_no_bukti, 0, 1) == '#') {
+            $main = new MainRepository();
+            $code = $fin_gl_no_bukti;
+            $availableReplace =  [
+                [
+                    'field' => 'status',
+                    'value' => '1',
+                ]
+
+            ];
+            $getData = $main->findByCode($code, $availableReplace);
+            if ($getData) {
+                $fieldTotalPrice = $getData['fieldTotalPrice'];
+                $menuTab = $getData['menuTab'];
+                $price = $getData[$fieldTotalPrice];
+                $debit_total = $inputs['debit_total'];
+                if ($price != $debit_total) {
+                    $this->errors['notMatchPrice'] = 'The price should be exact match ' . number($price) . ' , you can check detail code ' . $code . ' on Navigasi ' . $menuTab;
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        return true;
     }
 
     public function assert2(array  $inputs)
@@ -127,7 +163,10 @@ class GLSubscriptionValidator
                 return false;
             }
         }
-
+        $checkPay =  $this->checkPay($inputs);
+        if (!$checkPay) {
+            return false;
+        }
         return true;
     }
 

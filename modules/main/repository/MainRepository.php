@@ -24,7 +24,11 @@ class MainRepository
                         'value' => '1',
                     ]
 
-                ]
+                ],
+                'prefix' => settings('prefix_reimbursment'),
+                'fieldTotalPrice' => 'value',
+                'menuTab' => lang('reimbursment'),
+                'linkCode' => 'reimbursment/view/%s'
             ]
 
 
@@ -111,5 +115,60 @@ class MainRepository
         }
 
         return $op;
+    }
+
+    public function findByCode($code, $availableReplace = null)
+    {
+        $boolFind = false;
+        $index = false;
+        $result = false;
+        $arrCodeEloquent = $this->arrCodeEloquent;
+        for ($i = 0; $i < count($arrCodeEloquent); $i++) {
+            $prefix = $arrCodeEloquent[$i]['prefix'];
+            if (strpos($code, $prefix) !== false) {
+                $index = $i;
+                $boolFind = true;
+                break;
+            }
+        }
+
+        if ($boolFind && $index !== false) {
+            $i = $index;
+            $namespace =  $arrCodeEloquent[$i]['namespace'];
+            $data = new $namespace;
+            $data = $data->where($arrCodeEloquent[$i]['code'], $code);
+            if ($arrCodeEloquent[$i]['available']) {
+                $available = $arrCodeEloquent[$i]['available'];
+
+                for ($k = 0; $k < count($available); $k++) {
+                    $field = $available[$k]['field'];
+                    $value = $available[$k]['value'];
+
+                    $data = $data->where($field, $value);
+                }
+            }
+            $data = $data->first()->toArray();
+            $result = $data;
+            $result['fieldTotalPrice'] = $arrCodeEloquent[$i]['fieldTotalPrice'];
+            $result['menuTab'] = $arrCodeEloquent[$i]['menuTab'];
+            $result['linkCode'] = $arrCodeEloquent[$i]['linkCode'];
+        }
+
+        return $result;
+    }
+
+    public function openLinkCode($code, $availableReplace = null)
+    {
+        $data = $this->findByCode($code);
+        if ($data) {
+            $payload = array(
+                'id' => $data['reimbursment_id']
+            );
+            $encry = get_jwt_encryption($payload);
+            $path = sprintf($data['linkCode'], $encry);
+            return base_url() . $path;
+        }
+
+        return false;
     }
 }

@@ -100,6 +100,13 @@ class GeneralLedger extends CI_Controller // Non Dispersi
         $validation = $this->midlleware->validation($dataAll);
 
         if ($validation['status'] == 'success') {
+            $save = $this->repository->save($dataAll);
+            if ($save['status'] == 'success') {
+                // $return = array('message' => $save['message'], 'status' => 'success', 'redirect' => $this->data['module_url']);
+                $return = $save;
+            } else {
+                $return = $save;
+            }
         } else {
             $return = $validation;
         }

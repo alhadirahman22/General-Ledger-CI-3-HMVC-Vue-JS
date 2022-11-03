@@ -111,7 +111,7 @@
 									<li data-name="Departments" class="">
 										<a href="<?= base_url('administration/user_management/departments'); ?>">
 											<i class="menu-icon fa fa-leaf green"></i>
-											Departemen
+											Department
 										</a>
 
 										<b class="arrow"></b>
@@ -221,7 +221,7 @@
 				<a href="<?= base_url('reimbursment'); ?>" class="faa-parent animated-hover">
 					<i class="menu-icon fa fa-archive faa-shake"></i>
 					<span class="menu-text">
-						Reimbursment
+						<?php echo lang('reimbursment') ?>
 					</span>
 				</a>
 				<b class="arrow"></b>

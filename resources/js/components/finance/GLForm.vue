@@ -208,7 +208,12 @@
           </div>
         </div>
         <div class="pull-left">
-          <a class="btn btn-purple" v-html="iconbtn.cancel_w_icon"> </a>
+          <a
+            class="btn btn-purple"
+            :href="moduledata.module_url"
+            v-html="iconbtn.cancel_w_icon"
+          >
+          </a>
         </div>
         <div class="pull-right">
           <button
@@ -269,6 +274,10 @@ export default {
 
     onValidate(e, index, type) {
       const v = e.target.value;
+      if (v == "") {
+        const typeItself = type == "credit" ? "debit" : "credit";
+        this.form.detail[index][typeItself] = 0;
+      }
       if (v > 0) {
         this.form.detail[index].ref.disabled = type;
       } else {
@@ -401,7 +410,16 @@ export default {
                 url,
                 token
               );
-              App_template.response_form_token(json);
+              if (json.status == "error") {
+                this.$swal({
+                  title: "Alert",
+                  html: json.message,
+                  type: "info",
+                  confirmButtonText: "OK",
+                }).then(function () {});
+              } else {
+                App_template.response_form_token(json);
+              }
             } catch (err) {
               console.log(err);
             } finally {

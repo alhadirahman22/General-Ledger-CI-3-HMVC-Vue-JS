@@ -130,3 +130,6 @@ $lang['categories'] = 'Categories';
 $lang['slide_image_category'] = 'Sliding Image';
 $lang['dataitem'] = 'Data Item';
 
+
+#sidebar
+$lang['reimbursment'] = 'Reimbursment';

@@ -130,3 +130,6 @@ $lang['list_categories'] = 'Daftar Kategori';
 $lang['categories'] = 'Kategori';
 $lang['slide_image_category'] = 'Banner Slide';
 $lang['dataitem'] = 'Data Item';
+
+#sidebar
+$lang['reimbursment'] = 'Reimbursment';
