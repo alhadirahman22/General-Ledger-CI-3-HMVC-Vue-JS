@@ -2,8 +2,9 @@
 
 namespace Modules\finance\repository;
 
+use Modules\finance\trigger\GL_trigger;
+use Modules\main\repository\SiaRepository;
 use Modules\main\repository\MainRepository;
-
 use Modules\finance\models\GL_model_eloquent;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -101,7 +102,7 @@ class GLRepository
                 $hide = ($dataRaw[$i]['status'] == 1) ? 'hide' : '';
                 $showReferensi = $collection->implode('pivot.fin_gl_referensi', ', ');
 
-                $openLinkCode = $main->openLinkCode($dataRaw[$i]['fin_gl_no_bukti']);
+                $openLinkCode = $main->openLinkCode($dataRaw[$i]['fin_gl_no_bukti'], false);
                 if ($openLinkCode) {
                     $openLinkCode = '<a href="' . $openLinkCode . '" target="_blank" >' . $dataRaw[$i]['fin_gl_no_bukti'] . '</a>';
                 } else {
@@ -132,6 +133,90 @@ class GLRepository
         $output['draw'] = $draw++;
 
         return $output;
+    }
+
+    public function submit($dataPost)
+    {
+        $detail = $dataPost['form']['detail'];
+        $dataToken = $dataPost;
+        unset($dataToken['form']['detail']);
+        $dataToken = $dataToken['form'];
+        $detailDeleted = $dataPost['detailDeleted'];
+        if (!empty($dataToken['fin_gl_id'])) {
+            Capsule::beginTransaction();
+            try {
+                $getData = GL_model_eloquent::find($dataToken['fin_gl_id']);
+                $getData->fin_gl_date = $dataToken['fin_gl_date'];
+                $getData->fin_jurnal_voucher_id = $dataToken['fin_jurnal_voucher_id'];
+                $getData->debit_total = $dataToken['debit_total'];
+                $getData->credit_total = $dataToken['credit_total'];
+                $getData->selisih_total = $dataToken['selisih_total'];
+                $getData->status =  '1';
+                $getData->save();
+
+                $getData->detail()->delete();
+
+                $getData->detail()->createMany($detail);
+
+                $setToSia = $this->setToSia($dataToken, $detail);
+                if (!$setToSia) {
+                    Capsule::rollback();
+                    $return = array('message' => 'Something wrong to set SIA and Coa Saldo Table', 'status' => 'error');
+                    return $return;
+                }
+
+                $main = new MainRepository();
+                $triggerEvent = $main->findByCode($dataToken['fin_gl_no_bukti']['code']);
+                if ($triggerEvent) {
+                    $event = new GL_trigger($triggerEvent);
+                    if (!$event) {
+                        Capsule::rollback();
+                        $return = array('message' => 'Something wrong to set trigger', 'status' => 'error');
+                        return $return;
+                    }
+                }
+
+                $payload = array(
+                    'id' => $dataToken['fin_gl_id']
+                );
+                $encry = get_jwt_encryption($payload);
+                $return = array('message' => sprintf(lang('save_success'), lang('heading')), 'status' => 'success', 'redirect' => $this->CI->data['module_url'] . 'form/' . $encry);
+
+                Capsule::commit();
+            } catch (\Throwable $th) {
+                Capsule::rollback();
+                $return = array('message' => $th->getMessage(), 'status' => 'error');
+            }
+        }
+
+        return $return;
+    }
+
+    public function setToSia($dataToken, $detail)
+    {
+        for ($i = 0; $i < count($detail); $i++) {
+            $siaAr = [
+                'fin_coa_id' => $detail[$i]['fin_coa_id'],
+                'debit'  => $detail[$i]['debit'],
+                'credit' => $detail[$i]['credit'],
+                'id_refer' => $dataToken['fin_gl_id'],
+                'table_name' => 'fin_gl',
+                'desc' => 'Code : ' . $dataToken['fin_gl_code'],
+                'date_trans' => $dataToken['fin_gl_date'],
+                'created_by' => $this->CI->data['user']->id,
+                'updated_by' => $this->CI->data['user']->id,
+                'supplier_id' => null,
+                'customer_id' => null,
+            ];
+            $siaRepo = new SiaRepository($siaAr);
+            $setCoaSaldo = $siaRepo->setCoaSaldo();
+            if (!$setCoaSaldo) {
+                return false;
+            }
+        }
+
+
+        return true;
     }
 
     public function save($dataPost)
@@ -165,6 +250,32 @@ class GLRepository
                 Capsule::rollback();
                 $return = array('message' => $th->getMessage(), 'status' => 'error');
             }
+        } else {
+            Capsule::beginTransaction();
+            try {
+                $getData = GL_model_eloquent::find($dataToken['fin_gl_id']);
+                $getData->fin_gl_date = $dataToken['fin_gl_date'];
+                $getData->fin_jurnal_voucher_id = $dataToken['fin_jurnal_voucher_id'];
+                $getData->debit_total = $dataToken['debit_total'];
+                $getData->credit_total = $dataToken['credit_total'];
+                $getData->selisih_total = $dataToken['selisih_total'];
+                $getData->save();
+
+                $getData->detail()->delete();
+
+                $getData->detail()->createMany($detail);
+
+                $payload = array(
+                    'id' => $dataToken['fin_gl_id']
+                );
+                $encry = get_jwt_encryption($payload);
+                $return = array('message' => sprintf(lang('save_success'), lang('heading')), 'status' => 'success', 'redirect' => $this->CI->data['module_url'] . 'form/' . $encry);
+
+                Capsule::commit();
+            } catch (\Throwable $th) {
+                Capsule::rollback();
+                $return = array('message' => $th->getMessage(), 'status' => 'error');
+            }
         }
 
         return $return;
@@ -182,5 +293,63 @@ class GLRepository
         $new = $prefix . $strNumberNew;
 
         return ['code' => $new, 'inc' => $strNumberNew];
+    }
+
+    public function load_data($fin_gl_id)
+    {
+        $data = GL_model_eloquent::where('fin_gl_id', $fin_gl_id)->with('jurnal', 'detail_taging_coa')->first()->toArray();
+        if ($data) {
+            $dataForm = $data;
+            unset($dataForm['jurnal']);
+            unset($dataForm['created_at']);
+            unset($dataForm['updated_at']);
+            unset($dataForm['created_by']);
+            unset($dataForm['updated_by']);
+            unset($dataForm['detail_taging_coa']);
+            $dataForm['detail'] = [];
+            $detail_taging_coa = $data['detail_taging_coa'];
+
+            $main = new MainRepository();
+
+            $openLinkCode = $main->openLinkCode($dataForm['fin_gl_no_bukti']);
+            if ($openLinkCode) {
+                $openLinkCode = '<a href="' . $openLinkCode . '" target="_blank" >' . $dataForm['fin_gl_no_bukti'] . '</a>';
+            } else {
+                $openLinkCode = null;
+            }
+
+
+            for ($i = 0; $i < count($detail_taging_coa); $i++) {
+                $coaType = ($detail_taging_coa[$i]['type'] == 'D') ? 'Debit' : 'Credit';
+                $dataForm['detail'][$i] = [
+                    'fin_gl_detail_id' => $detail_taging_coa[$i]['pivot']['fin_gl_detail_id'],
+                    'fin_gl_id' => $detail_taging_coa[$i]['pivot']['fin_gl_id'],
+                    'fin_coa_id' => $detail_taging_coa[$i]['pivot']['fin_coa_id'],
+                    'fin_gl_referensi' => $detail_taging_coa[$i]['pivot']['fin_gl_referensi'],
+                    'debit' => $detail_taging_coa[$i]['pivot']['debit'],
+                    'credit' => $detail_taging_coa[$i]['pivot']['credit'],
+                    'desc' => $detail_taging_coa[$i]['pivot']['desc'],
+                    'ref' => [
+                        'name_coa_show' => $detail_taging_coa[$i]['fin_coa_code'] . ' - ' . $detail_taging_coa[$i]['fin_coa_name'] . ' - ' . $detail_taging_coa[$i]['type'] . '',
+                        'coa_type' => $coaType,
+                        'code' => $detail_taging_coa[$i]['fin_coa_code'],
+
+                    ],
+
+
+                ];
+            }
+
+            $ref = [
+                'jurnal_voucher_name_show' => $data['jurnal']['fin_jurnal_voucher_name'],
+                'totalCredit' => $data['credit_total'],
+                'totalDebit' => $data['debit_total'],
+                'selisih' => $data['selisih_total'],
+
+            ];
+            return ['form' => $dataForm, 'ref' => $ref, 'openLinkCode' => $openLinkCode];
+        }
+
+        return ['form' => [], 'ref' => [], 'openLinkCode' => null];
     }
 }

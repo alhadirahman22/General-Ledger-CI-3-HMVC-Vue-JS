@@ -503,4 +503,24 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
         }
         return [];
     }
+
+    public function paid($dataPost)
+    {
+        try {
+            $data = Reimbursment_model_eloquent::find($dataPost['reimbursment_id']);
+            $data->status = '99';
+            $data->updated_by = $this->CI->data['user']->id;
+            $data->save();
+
+            $this->sendEmail($data);
+        } catch (\Throwable $th) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function sendEmail($dataPost)
+    {
+    }
 }

@@ -51,6 +51,7 @@ Vue.component('gl-form', require('./components/finance/GLForm.vue').default);
 // Main Component
 Vue.component('range-date', require('./components/main/RangeDate.vue').default);
 Vue.component('input-currency', require('./components/main/InputCurrency.vue').default);
+Vue.component('modal-info', require('./components/main/ModalInfo.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -117,4 +117,37 @@ class GeneralLedger extends CI_Controller // Non Dispersi
         }
         echo json_encode($return);
     }
+
+    public function submit()
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+        $validation = $this->midlleware->validation($dataAll);
+
+        if ($validation['status'] == 'success') {
+            $save = $this->repository->submit($dataAll);
+            if ($save['status'] == 'success') {
+                // $return = array('message' => $save['message'], 'status' => 'success', 'redirect' => $this->data['module_url']);
+                $return = $save;
+            } else {
+                $return = $save;
+            }
+        } else {
+            $return = $validation;
+        }
+
+        if (isset($return['redirect'])) {
+            $this->session->set_flashdata('form_response_status', $return['status']);
+            $this->session->set_flashdata('form_response_message', $return['message']);
+        }
+        echo json_encode($return);
+    }
+
+    public function load_data($fin_gl_id)
+    {
+        $this->input->is_ajax_request() or exit('No direct post submit allowed!');
+        $data = $this->repository->load_data($fin_gl_id);
+        echo json_encode($data);
+    }
 }

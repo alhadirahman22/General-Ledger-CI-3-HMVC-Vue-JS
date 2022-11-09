@@ -30,10 +30,11 @@
                 @search-change="asyncFind"
                 @tag="addTag"
                 :taggable="true"
-                :disabled="status >= 0"
+                :disabled="status == '1' || status == '0'"
                 v-model="form.fin_gl_no_bukti"
               >
               </multiselect>
+              <div v-html="openLinkCode"></div>
             </div>
           </div>
           <div class="col-xs-3">
@@ -42,7 +43,7 @@
               <input
                 type="date"
                 class="form-control"
-                :disabled="status >= 0"
+                :disabled="status == 1"
                 v-model="form.fin_gl_date"
               />
             </div>
@@ -53,7 +54,7 @@
               <Select2
                 :options="jurnalOptions"
                 placeholder="Pilih Jurnal"
-                :disabled="status >= 0"
+                :disabled="status == 1"
                 v-model="form.fin_jurnal_voucher_id"
               />
             </div>
@@ -69,7 +70,7 @@
                     <button
                       class="btn btn-sm btn-secondary"
                       @click="addCoa"
-                      :disabled="status >= 0"
+                      :disabled="status == 1"
                     >
                       Add Coa
                     </button>
@@ -92,7 +93,7 @@
                             placeholder="Pilih Coa"
                             v-model="form.detail[index]['fin_coa_id']"
                             name="fin_coa_id"
-                            :disabled="status >= 0"
+                            :disabled="status == 1"
                             @select="onSelectCoa($event, index)"
                           />
                           <div style="display: flex">
@@ -107,7 +108,7 @@
                             class="form-control"
                             v-model="form.detail[index]['fin_gl_referensi']"
                             placeholder="Input Referensi"
-                            :disabled="status >= 0"
+                            :disabled="status == 1"
                           />
                         </td>
                         <td>
@@ -119,7 +120,7 @@
                             v-on:keyup="onValidate($event, index, 'credit')"
                             :disabled="
                               form.detail[index]['ref']['disabled'] ==
-                                'debit' || status >= 0
+                                'debit' || status == 1
                             "
                           />
                           <span style="color: red; font-weight: bold">{{
@@ -135,7 +136,7 @@
                             v-on:keyup="onValidate($event, index, 'debit')"
                             :disabled="
                               form.detail[index]['ref']['disabled'] ==
-                                'credit' || status >= 0
+                                'credit' || status == 1
                             "
                           />
                           <span style="color: green; font-weight: bold">{{
@@ -148,6 +149,7 @@
                             class="btn btn-sm btn-danger"
                             @click="deleteRow(index)"
                             v-if="status != '1'"
+                            :disabled="status == 1"
                           >
                             Delete
                           </button>
@@ -217,15 +219,113 @@
         </div>
         <div class="pull-right">
           <button
-            type="button"
             class="btn btn-primary"
-            v-if="status == -1"
             @click="onDraft"
+            v-if="status == null || status == '0'"
           >
             Draft
           </button>
+
+          <button
+            class="btn btn-success"
+            v-if="status == '0'"
+            @click="confirmData"
+          >
+            Submit
+          </button>
+          <button class="btn btn-info" v-if="status == '1'" @click="infoData">
+            Info
+          </button>
         </div>
       </div>
+      <modal-info
+        @close="closeModal"
+        :title="'Detail data'"
+        :ref_id="form.fin_gl_id"
+        v-if="showModalInfo"
+      >
+        <div slot="footer" class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-success btn-modal-submit"
+            @click="submit"
+            :disabled="procModal == 1"
+            v-show="modalStatus == '1'"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            class="btn btn-default"
+            data-dismiss="modal"
+            @click="closeModal"
+          >
+            Close
+          </button>
+        </div>
+        <div slot="body" class="modal-body">
+          <div class="row">
+            <div class="col-sm-3">
+              <b>Code : {{ form.fin_gl_code }}</b>
+            </div>
+            <div class="col-sm-3">
+              <b>No bukti : {{ form.fin_gl_no_bukti.code }}</b>
+            </div>
+            <div class="col-sm-3">
+              <b>Trans Date : {{ moment(form.fin_gl_date) }}</b>
+            </div>
+            <div class="col-sm-3">
+              <b>Jurnal Voucher : {{ ref.jurnal_voucher_name_show }}</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Kode Perkiraan</th>
+                    <th>Referensi</th>
+                    <th>Debit</th>
+                    <th>Credit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in form.detail" :key="index">
+                    <td>
+                      {{ item.ref.name_coa_show }}
+                    </td>
+                    <td>
+                      {{ item.fin_gl_referensi }}
+                    </td>
+                    <td>
+                      {{ format_money_other(item.debit) }}
+                    </td>
+                    <td>
+                      {{ format_money_other(item.credit) }}
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td>Total</td>
+                    <td>
+                      {{
+                        totalDebit == totalCredit ? "Balance" : "Not Balance"
+                      }}
+                    </td>
+                    <td>
+                      <b>{{ totalDebit }}</b>
+                    </td>
+                    <td>
+                      <b>{{ totalCredit }}</b>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </modal-info>
     </div>
   </widget-form>
 </template>
@@ -234,6 +334,7 @@
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import Multiselect from "vue-multiselect";
+import moment from "moment";
 Vue.component("multiselect", Multiselect);
 Vue.use(VueSweetalert2);
 export default {
@@ -257,16 +358,26 @@ export default {
       },
       detailDeleted: [],
       coaOptions: [],
-      status: -1,
+      status: null,
       ref: {
         jurnal_voucher_name_show: null,
         totalCredit: 0,
         totalDebit: 0,
         selisih: 0,
       },
+      openLinkCode: null,
+      showModalInfo: false,
+      procModal: 0,
+      modalStatus: "1", // 1  = submit , -1 just view
     };
   },
   methods: {
+    moment: function (v) {
+      return moment(v).format("DD MMMM YYYY");
+    },
+    closeModal() {
+      this.showModalInfo = false;
+    },
     onSelectCoa({ id, text }, index) {
       this.form.detail[index]["ref"]["name_coa_show"] = text;
     },
@@ -389,6 +500,61 @@ export default {
       bilangan = parseFloat(bilangan);
       return bilangan.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
     },
+    async submit() {
+      if (this.ref.totalCredit > 0 || this.ref.totalDebit > 0) {
+        if (parseFloat(this.ref.selisih) == 0) {
+          const url = this.moduledata.module_url + "submit";
+          let form = this.form;
+          form["debit_total"] = this.ref.totalDebit;
+          form["credit_total"] = this.ref.totalCredit;
+          form["selisih_total"] = this.ref.selisih;
+          const PostData = {
+            form: this.form,
+            detailDeleted: this.detailDeleted,
+          };
+          const token = jwt_encode(PostData, jwtKey);
+          if (confirm("Are you sure ?")) {
+            try {
+              this.procModal = 1;
+              const json = await App_template.AjaxSubmitFormPromises(
+                url,
+                token
+              );
+              if (json.status == "error") {
+                this.$swal({
+                  title: "Alert",
+                  html: json.message,
+                  type: "info",
+                  confirmButtonText: "OK",
+                }).then(function () {});
+              } else {
+                App_template.response_form_token(json);
+              }
+            } catch (err) {
+              console.log(err);
+            } finally {
+              setTimeout(() => {
+                this.procModal = 0;
+              }, 1000);
+            }
+          }
+        } else {
+          this.$swal({
+            title: "Alert",
+            html: "Please check balance",
+            type: "info",
+            confirmButtonText: "OK",
+          }).then(function () {});
+        }
+      } else {
+        this.$swal({
+          title: "Alert",
+          html: "Debit & Credit is required",
+          type: "info",
+          confirmButtonText: "OK",
+        }).then(function () {});
+      }
+    },
     async onDraft() {
       if (this.ref.totalCredit > 0 || this.ref.totalDebit > 0) {
         if (parseFloat(this.ref.selisih) == 0) {
@@ -444,11 +610,51 @@ export default {
         }).then(function () {});
       }
     },
+    async load_data() {
+      if (this.datas.fin_gl_id !== undefined) {
+        this.status = this.datas.status;
+        try {
+          App_template.loadingStart();
+          const url =
+            this.moduledata["module_url"] + "load_data/" + this.datas.fin_gl_id;
+          const json = await App_template.AjaxSubmitFormPromises(url);
+          this.form = json.form;
+          const newTag = json.form.fin_gl_no_bukti;
+
+          const tag = {
+            text: newTag,
+            code: newTag,
+          };
+          this.buktiOptions.push(tag);
+          this.form.fin_gl_no_bukti = tag;
+
+          this.status = json.form.status;
+          this.ref = json.ref;
+
+          this.openLinkCode = json.openLinkCode;
+        } catch (err) {
+          console.log(err);
+        } finally {
+          await App_template.timeout(1000);
+          App_template.loadingEnd(0);
+        }
+      }
+    },
+    confirmData() {
+      this.showModalInfo = true;
+    },
+    infoData() {
+      this.modalStatus = "-1";
+      this.showModalInfo = true;
+    },
+    async onDelete() {},
   },
-  async created() {
+  async mounted() {
     await this.jurnalOption();
     await this.coaOption();
     this.mountedSet = true;
+
+    await this.load_data();
   },
   computed: {
     debitShow() {

@@ -137,21 +137,41 @@ class MainRepository
             $namespace =  $arrCodeEloquent[$i]['namespace'];
             $data = new $namespace;
             $data = $data->where($arrCodeEloquent[$i]['code'], $code);
+
             if ($arrCodeEloquent[$i]['available']) {
-                $available = $arrCodeEloquent[$i]['available'];
 
-                for ($k = 0; $k < count($available); $k++) {
-                    $field = $available[$k]['field'];
-                    $value = $available[$k]['value'];
+                switch ($availableReplace) {
+                    case 'default':
+                        $available = $arrCodeEloquent[$i]['available'];
+                        break;
+                    case false:
+                    case null:
+                    case '':
+                        $available = false;
+                        break;
+                    default:
+                        $available = $availableReplace;
+                        break;
+                }
 
-                    $data = $data->where($field, $value);
+                if ($available && count($available) > 0) {
+                    for ($k = 0; $k < count($available); $k++) {
+                        $field = $available[$k]['field'];
+                        $value = $available[$k]['value'];
+
+                        $data = $data->where($field, $value);
+                    }
                 }
             }
+
             $data = $data->first()->toArray();
+
             $result = $data;
             $result['fieldTotalPrice'] = $arrCodeEloquent[$i]['fieldTotalPrice'];
             $result['menuTab'] = $arrCodeEloquent[$i]['menuTab'];
             $result['linkCode'] = $arrCodeEloquent[$i]['linkCode'];
+            $result['namespace'] = $namespace;
+            $result['fieldToFind'] = $arrCodeEloquent[$i]['code'];
         }
 
         return $result;
@@ -159,7 +179,7 @@ class MainRepository
 
     public function openLinkCode($code, $availableReplace = null)
     {
-        $data = $this->findByCode($code);
+        $data = $this->findByCode($code, $availableReplace);
         if ($data) {
             $payload = array(
                 'id' => $data['reimbursment_id']
