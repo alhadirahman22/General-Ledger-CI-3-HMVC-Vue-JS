@@ -18,8 +18,12 @@ class Main extends CI_Controller // Non Dispersi
         $eloquent = $_GET['eloquent'];
         $id = $_GET['id'];
         $text = $_GET['text'];
+        $where = false;
+        if (isset($_GET['where'])) {
+            $where = $_GET['where'];
+        }
 
-        $data = $this->repository->optionModels($eloquent, $id, $text);
+        $data = $this->repository->optionModels($eloquent, $id, $text, $where);
         echo json_encode([
             'success' => true,
             'data' => $data

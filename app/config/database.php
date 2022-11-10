@@ -18,7 +18,7 @@ $active_record = TRUE;
 $db['default']['hostname'] = empty(getenv('_DB_HOST')) ?     'localhost'        : getenv('_DB_HOST');
 $db['default']['username'] = empty(getenv('_DB_USER')) ?     'root'      : getenv('_DB_USER');
 $db['default']['password'] = empty(getenv('_DB_PASSWORD')) ? ''      : getenv('_DB_PASSWORD');
-$db['default']['database'] = empty(getenv('_DB_NAME')) ?     'smc' : getenv('_DB_NAME');
+$db['default']['database'] = empty(getenv('_DB_NAME')) ?     'sanaksys' : getenv('_DB_NAME');
 
 // $db['default']['port'] = empty(getenv('_DB_PORT')) ?     '1433' : getenv('_DB_PORT');
 $db['default']['dbdriver'] = 'mysqli'; // support with MYSQl,POSTGRE SQL, ORACLE,SQL SERVER

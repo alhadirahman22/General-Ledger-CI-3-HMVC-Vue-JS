@@ -2,6 +2,8 @@
 
 namespace Modules\reimbursment\repository;
 
+use Modules\main\repository\SiaRepository;
+use Modules\main\repository\MainRepository;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Modules\administration\repository\JabatanRepository;
 use Modules\reimbursment\models\Reimbursment_model_eloquent;
@@ -522,5 +524,68 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
 
     private function sendEmail($dataPost)
     {
+    }
+
+    public function pay($dataPost)
+    {
+        Capsule::beginTransaction();
+        try {
+            $data = Reimbursment_model_eloquent::find($dataPost['reimbursment_id']);
+            $dataSia = [
+                [
+                    'fin_coa_id' => settings('_coa_kas_default'),
+                    'debit'  => 0,
+                    'credit' => $dataPost['value'],
+                    'id_refer' => $dataPost['reimbursment_id'],
+                    'table_name' => 'reimbursment',
+                    'desc' => 'Code : ' . $data['code'],
+                    'date_trans' => $dataPost['date_trans'],
+                    'created_by' => $this->CI->data['user']->id,
+                    'updated_by' => $this->CI->data['user']->id,
+                    'supplier_id' => null,
+                    'customer_id' => null,
+                ],
+                [
+                    'fin_coa_id' => $dataPost['fin_coa_id'],
+                    'debit'  =>  $dataPost['value'],
+                    'credit' => 0,
+                    'id_refer' => $dataPost['reimbursment_id'],
+                    'table_name' => 'reimbursment',
+                    'desc' => 'Code : ' . $data['code'],
+                    'date_trans' => $dataPost['date_trans'],
+                    'created_by' => $this->CI->data['user']->id,
+                    'updated_by' => $this->CI->data['user']->id,
+                    'supplier_id' => null,
+                    'customer_id' => null,
+                ],
+
+            ];
+
+
+            for ($i = 0; $i < count($dataSia); $i++) {
+                $siaRepo = new SiaRepository($dataSia[$i]);
+                $setCoaSaldo = $siaRepo->setCoaSaldo();
+                if (!$setCoaSaldo) {
+                    Capsule::rollback();
+                    $return = array('message' => 'Something wrong to set SIA and Coa Saldo Table', 'status' => 'error');
+                    return $return;
+                }
+            }
+
+            $paidStatus = $this->paid($dataPost);
+            if (!$paidStatus) {
+                Capsule::rollback();
+                $return = array('message' => 'Something wrong to change status to paid', 'status' => 'error');
+                return $return;
+            }
+
+            $return = array('message' => '', 'status' => 'success');
+            Capsule::commit();
+        } catch (\Throwable $th) {
+            Capsule::rollback();
+            $return = array('message' => $th->getMessage(), 'status' => 'error');
+        }
+
+        return $return;
     }
 }

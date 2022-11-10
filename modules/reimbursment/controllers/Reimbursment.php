@@ -1,7 +1,9 @@
 <?php
 
+use Modules\main\repository\MainRepository;
 use Modules\reimbursment\midlleware\ReimbursmentMiddleware;
 use Modules\reimbursment\repository\ReimbursmentRepository;
+use Modules\finance\models\Coa_model_eloquent;
 
 defined('BASEPATH') or exit('No direct script access allowed!');
 
@@ -64,6 +66,9 @@ class Reimbursment extends CI_Controller
         $id = $midlleware['id'];
 
         $dataprop = $this->repository->findByID($id);
+
+        $this->data['auth_pay'] = $this->midlleware->authPay();
+        $this->data['coa_kas_default'] = $this->m_master->encodeToPropVue(array());
 
 
         $this->output->set_title((!empty($id) ? lang('edit') : lang('add')) . ' ' . lang('heading'));
@@ -155,6 +160,15 @@ class Reimbursment extends CI_Controller
 
         $dataprop = $this->repository->findByID($id);
 
+        $this->data['auth_pay'] = $this->midlleware->authPay();
+        $coa_kas_default = settings('_coa_kas_default');
+        if (!$coa_kas_default) {
+            die('Please set _coa_kas_default on your settings');
+        }
+
+        $this->data['coa_kas_default'] = $this->m_master->encodeToPropVue(Coa_model_eloquent::find($coa_kas_default));
+
+
         $this->output->set_title((!empty($id) ? lang('edit') : lang('add')) . ' ' . lang('heading'));
         $this->data['headingOverwrite'] = 'Form ' . lang('heading');
         $this->template->_init();
@@ -197,5 +211,29 @@ class Reimbursment extends CI_Controller
         $dataShow = $this->repository->approve($item);
 
         echo json_encode($dataShow);
+    }
+
+    public function pay()
+    {
+        $auth = $this->midlleware->authPay();
+        if (!$auth) {
+            $return = array('message' => 'You are not authorize for this action', 'status' => 'error');
+            echo json_encode($return);
+            return;
+        }
+
+        $token = $this->input->post('token');
+        $dataAll = $this->m_master->decode_token($token);
+
+        $validation = $this->midlleware->validationPay($dataAll);
+        if ($validation['status'] == 'success') {
+            $return = $this->repository->pay($dataAll);
+            $return['redirect'] = $this->data['module_url'];
+        } else {
+            $return = $validation;
+        }
+
+
+        echo json_encode($return);
     }
 }

@@ -91,9 +91,12 @@ class MainRepository
         return $op;
     }
 
-    public function optionModels($eloquent, $id, $text)
+    public function optionModels($eloquent, $id, $text, $where = false)
     {
         $datas = new $eloquent;
+        if ($where) {
+            $datas = $datas->whereRaw($where);
+        }
         $datas = $datas->get()->toArray();
         $ex = explode('-', $text);
 

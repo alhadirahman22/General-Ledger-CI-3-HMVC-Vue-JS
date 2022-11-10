@@ -13,7 +13,7 @@ class Sia_model_eloquent extends Eloquent
     protected $primaryKey = 'sia_id';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-    protected $fillable = ['fin_coa_id', 'id_refer', 'debit', 'credit', 'desc', 'created_by', 'updated_by'];
+    protected $fillable = ['fin_coa_id', 'id_refer', 'table_name', 'debit', 'credit', 'desc', 'created_by', 'updated_by', 'customer_id', 'supplier_id'];
 
     public function coa()
     {

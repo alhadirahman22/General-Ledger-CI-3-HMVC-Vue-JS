@@ -155,6 +155,43 @@
             </div>
           </div>
         </div>
+        <div v-show="auth_pay == 1 && dataprop.status == '1'">
+          <div class="row">
+            <div class="col-sm-12">
+              <h4><u>Set Payment Finance</u></h4>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-form-label col-md-3"> Choose Coa</label>
+            <div class="col-md-6">
+              <Select2
+                v-model="fin_coa_id"
+                :options="coaOptions"
+                placeholder="Pilih Coa"
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-form-label col-md-3">
+              Transaction Pay</label
+            >
+            <div class="col-md-6">
+              <input type="date" class="form-control" v-model="date_trans" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <p style="color: red">
+                This transaction use coa : {{ coa_kas_default.fin_coa_code }} -
+                {{ coa_kas_default.fin_coa_name }} as Coa Default
+              </p>
+              <p style="color: #a7632a">
+                If you have to custom jurnal for this transaction, you can use
+                General Ledger Menu
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div slot="footerbutton">
@@ -193,6 +230,15 @@
         >
           Reject
         </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          v-show="auth_pay == 1 && dataprop.status == '1'"
+          @click="pay"
+          :disabled="btnPay"
+        >
+          Pay
+        </button>
       </div>
     </div>
   </widget-form>
@@ -204,7 +250,14 @@ import "sweetalert2/dist/sweetalert2.min.css";
 import Datepicker from "vuejs-datepicker";
 Vue.use(VueSweetalert2);
 export default {
-  props: ["title", "dataprop", "moduledata", "iconbtn"],
+  props: [
+    "title",
+    "dataprop",
+    "moduledata",
+    "iconbtn",
+    "auth_pay",
+    "coa_kas_default",
+  ],
   components: {
     Datepicker,
   },
@@ -224,6 +277,10 @@ export default {
       dataApproval: [],
       approvalType: null,
       btnApproval: false,
+      coaOptions: [],
+      fin_coa_id: null,
+      date_trans: null,
+      btnPay: false,
     };
   },
   methods: {
@@ -275,6 +332,28 @@ export default {
         "</span>"
       );
     },
+    async loadCoa() {
+      const res = await axios.get(base_url + "main/optionModels", {
+        params: {
+          id: "fin_coa_id",
+          text: "fin_coa_code-fin_coa_name-type",
+          eloquent: "Modules\\finance\\models\\Coa_model_eloquent",
+          where: "type='C'",
+        },
+      });
+      if (res.data.success) {
+        let dataRest = res.data.data;
+        let myOptions = [];
+        for (let index = 0; index < dataRest.length; index++) {
+          const temp = {
+            id: dataRest[index].id,
+            text: dataRest[index].text,
+          };
+          myOptions.push(temp);
+        }
+        this.coaOptions = myOptions;
+      }
+    },
     async loadEmployee() {
       const res = await axios(base_url + "administration/api_employee/fetch");
       if (res.data.success) {
@@ -288,6 +367,46 @@ export default {
           myOptions.push(temp);
         }
         this.employeeOptions = myOptions;
+      }
+    },
+    async pay() {
+      if (confirm("Are you sure ?")) {
+        const postData = {
+          fin_coa_id: this.fin_coa_id,
+          reimbursment_id: this.reimbursment_id,
+          value: this.value,
+          date_trans: this.date_trans,
+        };
+
+        App_template.loadingStart();
+        this.btnPay = true;
+        try {
+          const token = jwt_encode(postData, jwtKey);
+          const json = await App_template.AjaxSubmitFormPromises(
+            this.moduledata.module_url + "pay",
+            token
+          );
+          if (json.status == "success") {
+            this.code = json.code;
+            this.$swal({
+              title: "Code",
+              html: "<h4>Payment is <br/> Successfull</h4>",
+              type: "success",
+              confirmButtonText: "OK",
+            }).then(function () {
+              App_template.response_form_token(json);
+            });
+          } else {
+            App_template.response_form_token(json);
+            this.btnPay = false;
+          }
+        } catch (error) {
+          console.log(error);
+          this.btnPay = false;
+        } finally {
+          await App_template.timeout(1000);
+          App_template.loadingEnd(0);
+        }
       }
     },
     async submit() {
@@ -411,7 +530,10 @@ export default {
   },
   async created() {
     await this.loadShowData();
-    this.loadEmployee();
+    await this.loadEmployee();
+    if (this.dataprop.status == "1" && this.auth_pay == 1) {
+      await this.loadCoa();
+    }
   },
 };
 </script>

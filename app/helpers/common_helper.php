@@ -274,21 +274,28 @@ if (!function_exists('settings')) {
 
     function settings($key)
     {
-        if ($key) {
-            $CI = get_instance();
-            if ($CI->session->has_userdata('getsSettings')) {
-                return $CI->session->userdata('getsSettings')[$key];
-            } else {
-                $CI->load->database();
-                $settings = $CI->db->get('settings');
-                foreach ($settings->result() as $setting) {
-                    $data[$setting->key] = $setting->value;
-                }
+        try {
+            if ($key) {
+                $CI = get_instance();
+                if ($CI->session->has_userdata('getsSettings')) {
+                    if (!isset($CI->session->userdata('getsSettings')[$key])) {
+                        return false;
+                    }
+                    return $CI->session->userdata('getsSettings')[$key];
+                } else {
+                    $CI->load->database();
+                    $settings = $CI->db->get('settings');
+                    foreach ($settings->result() as $setting) {
+                        $data[$setting->key] = $setting->value;
+                    }
 
-                $CI->session->set_userdata('getsSettings', $data);
-                return $data[$key];
+                    $CI->session->set_userdata('getsSettings', $data);
+                    return $data[$key];
+                }
+            } else {
+                return false;
             }
-        } else {
+        } catch (\Throwable $th) {
             return false;
         }
     }

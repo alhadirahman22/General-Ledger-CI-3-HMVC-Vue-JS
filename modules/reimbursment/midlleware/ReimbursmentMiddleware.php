@@ -37,6 +37,46 @@ class ReimbursmentMiddleware
         return ['data' => $data, 'id' => $id];
     }
 
+    public function validationPay($dataPost)
+    {
+        $return = array('message' => '', 'status' => 'success');
+        $this->CI->load->library('form_validation');
+
+        $form_validation_arr = array(
+            array(
+                'field' => 'fin_coa_id',
+                'label' => 'Coa',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'reimbursment_id',
+                'label' => 'reimbursment_id',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'value',
+                'label' => 'Prices',
+                'rules' => 'required'
+            ),
+            array(
+                'field' => 'date_trans',
+                'label' => 'Transaction Pay',
+                'rules' => 'required'
+            ),
+
+        );
+
+
+        $this->CI->form_validation->set_data($dataPost);
+        $this->CI->form_validation->set_rules($form_validation_arr);
+
+        if ($this->CI->form_validation->run() !== true) {
+            $return = array('message' => validation_errors(), 'status' => 'error');
+        }
+
+        return $return;
+    }
+
     public function validation($dataPost)
     {
         $return = array('message' => '', 'status' => 'success');
@@ -90,5 +130,10 @@ class ReimbursmentMiddleware
         } else {
             return false;
         }
+    }
+
+    public function authPay()
+    {
+        return $this->CI->aauth->is_allowed($this->CI->perm . '/pay');
     }
 }
