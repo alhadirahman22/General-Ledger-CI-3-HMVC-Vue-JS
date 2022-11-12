@@ -2,7 +2,7 @@
 
 namespace Modules\finance\midlleware\coa;
 
-use Modules\finance\models\SiaModelEloquent;
+use Modules\finance\models\Sia_model_eloquent as SiaModelEloquent;
 
 
 class CoaMiddleware

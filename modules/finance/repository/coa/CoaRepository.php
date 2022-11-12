@@ -79,9 +79,9 @@ class CoaRepository
             ),
         ];
 
-        if ($data) {
-            $form[1]['disabled'] = 'true';
-        }
+        // if ($data) {
+        //     $form[1]['disabled'] = 'true';
+        // }
 
         return $form;
     }
@@ -149,8 +149,15 @@ class CoaRepository
         if ($filter) {
             $datas = $datas->where(function ($query) use ($filter, $columns) {
                 foreach ($filter as $column => $value) {
-                    if (!empty($value)) {
-                        $query->where($columns[$column]['name'], 'like', '' . $value . '%');
+                    if ($columns[$column]['filter']) {
+
+                        if (!empty($value)) {
+                            if ($columns[$column]['filter']['type'] == 'dropdown') {
+                                $query->where($columns[$column]['name'], $value);
+                            } else {
+                                $query->where($columns[$column]['name'], 'like', '' . $value . '%');
+                            }
+                        }
                     }
                 }
             });

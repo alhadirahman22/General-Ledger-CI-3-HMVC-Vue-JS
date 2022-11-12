@@ -23,12 +23,13 @@ class Coa_index extends CI_Controller // Non Dispersi
         $this->data['table'] = [
             'columns' => [
                 '0' => ['name' => 'fin_coa.fin_coa_id', 'title' => 'ID', 'filter' => false, 'class' => 'text-center default-sort', 'sort' => 'desc'],
-                '1' => ['name' => 'fin_coa_group.fin_coa_group_code', 'title' => 'Group', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
+                // '1' => ['name' => 'fin_coa_group.fin_coa_group_code', 'title' => 'Group', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
+                '1' => ['name' => 'fin_coa_group.fin_coa_group_id', 'title' => 'Group', 'filter' => ['type' => 'dropdown', 'options' => $this->m_master->get_dropdown('(select a.fin_coa_group_id,concat(a.fin_coa_group_code," - ",a.fin_coa_group_name) as codeShow from fin_coa_group as a) as xx', 'fin_coa_group_id', 'codeShow')], 'class' => 'text-center'],
                 '2' => ['name' => 'fin_coa.fin_coa_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
                 '3' => ['name' => 'fin_coa.fin_coa_name', 'title' => 'Name', 'filter' => ['type' => 'text']],
                 '4' => ['name' => 'fin_coa.type', 'title' => 'Type', 'class' => 'text-center', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', 'D' => 'Debit', 'C' => 'Credit']]],
                 '5' => ['name' => 'fin_coa.status', 'class' => 'text-center', 'title' => 'Aktif', 'filter' => ['type' => 'dropdown', 'options' => ['' => 'All', 'A' => 'Y', 'T' => 'N']]],
-                '6' => ['name' => 'fin_coa_aktiva_passiva_sub.name', 'class' => 'text-center', 'title' => 'Grouping', 'filter' => false, 'class' => 'no-sort'],
+                '6' => ['name' => 'fin_coa_aktiva_passiva_sub.fin_coa_aktiva_passiva_sub_id', 'class' => 'text-center', 'title' => 'Grouping', 'filter' => ['type' => 'dropdown', 'options' => $this->m_master->get_dropdown('(select b.fin_coa_aktiva_passiva_sub_id,concat(a.name," - ",b.name) as codeShow from fin_coa_aktiva_passiva as a join fin_coa_aktiva_passiva_sub as b on a.fin_coa_aktiva_passiva_id = b.fin_coa_aktiva_passiva_id) as xx', 'fin_coa_aktiva_passiva_sub_id', 'codeShow')], 'class' => 'no-sort'],
                 '7' => ['name' => 'fin_coa.created_by', 'title' => 'Created', 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'

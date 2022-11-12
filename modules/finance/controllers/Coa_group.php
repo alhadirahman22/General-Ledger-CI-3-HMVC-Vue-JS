@@ -25,7 +25,7 @@ class Coa_group extends CI_Controller // Non Dispersi
                 '0' => ['name' => 'fin_coa_group.fin_coa_group_id', 'title' => 'ID', 'filter' => false, 'class' => 'text-center default-sort', 'sort' => 'desc'],
                 '1' => ['name' => 'fin_coa_group.fin_coa_group_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
                 '2' => ['name' => 'fin_coa_group.name', 'title' => 'Name', 'filter' => ['type' => 'text']],
-                '3' => ['name' => 'fin_coa_aktiva_passiva_sub.name', 'title' => 'Grouping', 'filter' => false, 'class' => 'no-sort'],
+                '3' => ['name' => 'fin_coa_aktiva_passiva_sub.fin_coa_aktiva_passiva_sub_id', 'title' => 'Grouping', 'filter' => ['type' => 'dropdown', 'options' => $this->m_master->get_dropdown('(select b.fin_coa_aktiva_passiva_sub_id,concat(a.name," - ",b.name) as codeShow from fin_coa_aktiva_passiva as a join fin_coa_aktiva_passiva_sub as b on a.fin_coa_aktiva_passiva_id = b.fin_coa_aktiva_passiva_id) as xx', 'fin_coa_aktiva_passiva_sub_id', 'codeShow')], 'class' => 'no-sort'],
                 '4' => ['name' => 'created_by', 'title' => 'Created', 'filter' => false, 'class' => 'no-sort'],
             ],
             'url' => $this->data['module_url'] . 'get_list'

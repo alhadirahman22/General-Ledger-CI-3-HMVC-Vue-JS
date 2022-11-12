@@ -116,7 +116,12 @@ class CoaGroupRepository
             $datas = $datas->where(function ($query) use ($filter, $columns) {
                 foreach ($filter as $column => $value) {
                     if (!empty($value)) {
-                        $query->where($columns[$column]['name'], 'like', '' . $value . '%');
+
+                        if ($column == 3) {
+                            $query->where($columns[$column]['name'], $value);
+                        } else {
+                            $query->where($columns[$column]['name'], 'like', '' . $value . '%');
+                        }
                     }
                 }
             });
