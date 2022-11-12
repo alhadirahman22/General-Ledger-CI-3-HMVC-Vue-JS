@@ -57,7 +57,7 @@ class GLRepository
                 if ($column == 4) {
                     $datas = $datas->whereHas('detail_taging_coa', function ($query) use ($value) {
                         if (!empty($value)) {
-                            $query->where('fin_gl_detail.fin_gl_referensi', 'like', '' . $value . '%');
+                            $query->where('fin_gl_detail.fin_gl_referensi', 'like', '%' . $value . '%');
                         }
                     });
                 }
