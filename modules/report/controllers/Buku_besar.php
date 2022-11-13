@@ -2,10 +2,11 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Modules\finance\models\Coa_saldo_history_model_eloquent;
+use Modules\reimbursment\models\Reimbursment_model_eloquent;
 use Modules\finance\models\GL_model_eloquent;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Modules\finance\models\Coa_saldo_model_eloquent;
+use Modules\finance\models\Coa_saldo_history_model_eloquent;
 
 
 class Buku_besar extends CI_Controller
@@ -131,10 +132,25 @@ class Buku_besar extends CI_Controller
                     $custorSupp = '';
 
                     if (!empty($id_refer)) {
-                        if ($table_name == 'fin_gl') {
-                            $gl = GL_model_eloquent::find($id_refer);
-                            $no_bukti = $gl->fin_gl_no_bukti;
+
+                        switch ($table_name) {
+                            case 'fin_gl':
+                                $gl = GL_model_eloquent::find($id_refer);
+                                $no_bukti = $gl->fin_gl_no_bukti;
+                                break;
+                            case 'reimbursment':
+                                // $gl = Reimbursment_model_eloquent::find($id_refer);
+                                // $no_bukti = $gl->code;
+                                break;
+                            default:
+                                # code...
+                                break;
                         }
+
+                        // if ($table_name == 'fin_gl') {
+                        //     $gl = GL_model_eloquent::find($id_refer);
+                        //     $no_bukti = $gl->fin_gl_no_bukti;
+                        // }
 
                         $dataSIA = $this->db->where('fin_coa_id', $fin_coa_id)->where('id_refer', $id_refer)->where('table_name', $table_name)->get('sia')->result();
 
