@@ -17,12 +17,12 @@
           </div>
           <div class="col-xs-3">
             <div class="form-group">
-              <label> No Bukti</label>
+              <label> Data Refer</label>
               <multiselect
                 id="ajax"
                 label="text"
                 track-by="code"
-                placeholder="Type to search"
+                placeholder="Type to  search code"
                 :options="buktiOptions"
                 :multiple="false"
                 :searchable="true"

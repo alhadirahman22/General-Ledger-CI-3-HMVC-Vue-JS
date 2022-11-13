@@ -66,7 +66,7 @@ class GLSubscriptionValidator
     public function initRules2()
     {
         $this->rules2['fin_jurnal_voucher_id'] = V::number()->setTemplate($this->messages['number'])->notBlank()->setTemplate($this->messages['notBlank'])->setName('Jurnal Voucher');
-        $this->rules2['fin_gl_no_bukti'] = V::notBlank()->setTemplate($this->messages['notBlank'])->setName('No Bukti');
+        $this->rules2['fin_gl_no_bukti'] = V::notBlank()->setTemplate($this->messages['notBlank'])->setName('Data Refer');
         $this->rules2['fin_gl_date'] = V::notBlank()->setTemplate($this->messages['notBlank'])->date()->setTemplate($this->messages['date'])->setName('Trans Date');
         $this->rules2['selisih_total'] = V::intVal()->equals(0)->setName('Selisih');
     }
