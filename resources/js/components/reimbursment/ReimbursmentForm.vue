@@ -389,7 +389,7 @@ export default {
           if (json.status == "success") {
             this.code = json.code;
             this.$swal({
-              title: "Code",
+              title: "Payment Status",
               html: "<h4>Payment is <br/> Successfull</h4>",
               type: "success",
               confirmButtonText: "OK",
