@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50733
 File Encoding         : 65001
 
-Date: 2022-11-12 23:03:14
+Date: 2022-11-13 16:41:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -46,8 +46,8 @@ INSERT INTO `fin_coa` VALUES ('4', '5', 'M0102', '02', 'Modal PT ADG Group', 'C'
 INSERT INTO `fin_coa` VALUES ('5', '11', 'K30101', '01', 'Hutang Operasional', 'C', 'A', '', '2022-11-12 22:10:35', '2022-11-12 22:18:27', '1', '1');
 INSERT INTO `fin_coa` VALUES ('6', '11', 'K30102', '02', 'Hutang Perjalanan Dinas', 'C', 'A', '', '2022-11-12 22:19:45', null, '1', null);
 INSERT INTO `fin_coa` VALUES ('7', '11', 'K30103', '03', 'Hutang Jasa Vendor Cable', 'C', 'A', '', '2022-11-12 22:20:48', null, '1', null);
-INSERT INTO `fin_coa` VALUES ('8', '8', 'A30101', '01', 'Sewa Mobil', 'D', 'A', '', '2022-11-12 22:21:37', '2022-11-12 22:22:48', '1', '1');
-INSERT INTO `fin_coa` VALUES ('9', '8', 'A30102', '02', 'IT Operasional', 'D', 'A', '', '2022-11-12 22:23:42', null, '1', null);
+INSERT INTO `fin_coa` VALUES ('8', '8', 'A30101', '01', 'Sewa Mobil Bayar di Muka', 'D', 'A', '', '2022-11-12 22:21:37', '2022-11-13 00:12:26', '1', '1');
+INSERT INTO `fin_coa` VALUES ('9', '8', 'A30102', '02', 'IT Operasional Bayar di Muka', 'D', 'A', '', '2022-11-12 22:23:42', '2022-11-13 10:46:08', '1', '1');
 INSERT INTO `fin_coa` VALUES ('10', '11', 'K30104', '04', 'Hutang Entertainment', 'C', 'A', '', '2022-11-12 22:24:20', null, '1', null);
 INSERT INTO `fin_coa` VALUES ('11', '11', 'K30105', '05', 'Hutang Sewa Mobil', 'C', 'A', '', '2022-11-12 22:24:38', null, '1', null);
 INSERT INTO `fin_coa` VALUES ('12', '2', 'K10101', '01', 'Hutang Gaji', 'C', 'A', '', '2022-11-12 22:25:30', null, '1', null);
