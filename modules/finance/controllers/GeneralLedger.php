@@ -27,20 +27,20 @@ class GeneralLedger extends CI_Controller // Non Dispersi
                 '1' => ['name' => 'fin_gl_code', 'title' => 'Code', 'filter' => ['type' => 'text'], 'class' => 'text-center'],
                 '2' => ['name' => 'fin_jurnal_voucher_id', 'title' => 'Jurnal Voucher', 'filter' => ['type' => 'dropdown', 'options' => $this->m_master->get_dropdown('fin_jurnal_voucher', 'fin_jurnal_voucher_id', 'fin_jurnal_voucher_name')], 'class' => 'text-center'],
                 '3' => ['name' => 'fin_coa_id', 'title' => 'Coa Code', 'filter' => ['type' => 'text'], 'class' => 'no-sort'],
-                '4' => ['name' => 'fin_coa_id', 'title' => 'Reference', 'filter' => ['type' => 'text'], 'class' => 'no-sort'],
-                '5' => ['name' => 'fin_gl_no_bukti', 'title' => 'No Bukti', 'filter' => ['type' => 'text']],
-                '6' => ['name' => 'fin_gl_date', 'title' => 'Date', 'filter' => false],
-                '7' => ['name' => 'debit_total', 'class' => 'text-center', 'title' => 'Debit', 'filter' => false],
-                '8' => ['name' => 'credit_total', 'class' => 'text-center', 'title' => 'Credit', 'filter' => false],
-                '9' => ['name' => 'status', 'class' => 'text-center', 'title' => 'Status', 'filter' => false],
-                '10' => ['name' => 'updated_at', 'title' => 'Time', 'filter' => false, 'class' => 'no-sort text-center'],
+                // '4' => ['name' => 'fin_coa_id', 'title' => 'Reference', 'filter' => ['type' => 'text'], 'class' => 'no-sort'],
+                '4' => ['name' => 'fin_gl_no_bukti', 'title' => 'No Bukti', 'filter' => ['type' => 'text']],
+                '5' => ['name' => 'fin_gl_date', 'title' => 'Date', 'filter' => false],
+                '6' => ['name' => 'debit_total', 'class' => 'text-center', 'title' => 'Debit', 'filter' => false],
+                '7' => ['name' => 'credit_total', 'class' => 'text-center', 'title' => 'Credit', 'filter' => false],
+                '8' => ['name' => 'status', 'class' => 'text-center', 'title' => 'Status', 'filter' => false],
+                '9' => ['name' => 'updated_at', 'title' => 'Time', 'filter' => false, 'class' => 'no-sort text-center'],
             ],
             'url' => $this->data['module_url'] . 'get_list'
         ];
 
 
         if ($this->aauth->is_allowed($this->perm . '/edit') || ($this->aauth->is_allowed($this->perm . '/delete'))) {
-            $this->data['table']['columns']['11'] = ['name' => 'fin_gl_id', 'title' => '', 'class' => 'no-sort text-center', 'width' => '7%', 'filter' => ['type' => 'action']];
+            $this->data['table']['columns']['10'] = ['name' => 'fin_gl_id', 'title' => '', 'class' => 'no-sort text-center', 'width' => '7%', 'filter' => ['type' => 'action']];
         }
 
         $this->data['filter_name'] = 'table_filter_finance_gl';

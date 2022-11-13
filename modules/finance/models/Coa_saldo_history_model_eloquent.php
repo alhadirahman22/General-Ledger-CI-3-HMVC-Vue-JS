@@ -13,7 +13,7 @@ class Coa_saldo_history_model_eloquent extends Eloquent
     protected $primaryKey = 'fin_coa_saldo_history_id';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-    protected $fillable = ['fin_coa_saldo_id', 'id_refer', 'table_name', 'desc', 'value', 'current_value', 'become_value', 'type_value', 'date_trans'];
+    protected $fillable = ['fin_coa_saldo_id', 'id_refer', 'table_name', 'desc', 'value', 'current_value', 'become_value', 'type_value', 'date_trans', 'id_refer_sub_1', 'table_name_sub_1', 'id_refer_sub_2', 'table_name_sub_2', 'sia_id'];
 
 
     public function coa_saldo()

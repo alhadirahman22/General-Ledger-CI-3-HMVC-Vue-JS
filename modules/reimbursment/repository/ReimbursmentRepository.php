@@ -544,6 +544,10 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
                     'updated_by' => $this->CI->data['user']->id,
                     'supplier_id' => null,
                     'customer_id' => null,
+                    'id_refer_sub_1' => null,
+                    'table_name_sub_1' => null,
+                    'id_refer_sub_2' => null,
+                    'table_name_sub_2' => null,
                 ],
                 [
                     'fin_coa_id' => $dataPost['fin_coa_id'],
@@ -557,6 +561,10 @@ class ReimbursmentRepository implements ReimbursmentRepositoryInterface
                     'updated_by' => $this->CI->data['user']->id,
                     'supplier_id' => null,
                     'customer_id' => null,
+                    'id_refer_sub_1' => null,
+                    'table_name_sub_1' => null,
+                    'id_refer_sub_2' => null,
+                    'table_name_sub_2' => null,
                 ],
 
             ];

@@ -3,6 +3,9 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 // print_r(Date('YmdHis'));
 // die();
+
+
+
 $route['default_controller'] = 'dashboard';
 $route['dashboard'] = 'dashboard';
 $route['404_override'] = '';

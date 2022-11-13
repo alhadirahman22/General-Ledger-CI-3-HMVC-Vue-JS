@@ -4,6 +4,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 use Modules\reimbursment\models\Reimbursment_model_eloquent;
 use Modules\finance\models\GL_model_eloquent;
+use Modules\finance\models\Gl_detail_model_eloquent;
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Modules\finance\models\Coa_saldo_model_eloquent;
 use Modules\finance\models\Coa_saldo_history_model_eloquent;
@@ -129,18 +131,27 @@ class Buku_besar extends CI_Controller
                     $debit = 0;
                     $credit = 0;
                     $saldoAkhir  = $dataHistoryCoa[$j]['become_value'];
-                    $custorSupp = '';
+                    $custorSupp = '-';
+                    $references = '';
+
 
                     if (!empty($id_refer)) {
 
                         switch ($table_name) {
                             case 'fin_gl':
-                                $gl = GL_model_eloquent::find($id_refer);
-                                $no_bukti = $gl->fin_gl_no_bukti;
+                                //$gl = GL_model_eloquent::find($id_refer);
+                                //$no_bukti = $gl->fin_gl_no_bukti;
+
+                                $id_refer_sub_1 = $dataHistoryCoa[$j]['id_refer_sub_1'];
+                                $GL_deTail = Gl_detail_model_eloquent::find($id_refer_sub_1);
+                                $references = $GL_deTail->fin_gl_referensi;
+
                                 break;
                             case 'reimbursment':
-                                // $gl = Reimbursment_model_eloquent::find($id_refer);
+                                $Reimburs = Reimbursment_model_eloquent::find($id_refer);
                                 // $no_bukti = $gl->code;
+
+                                $references = $Reimburs->name;
                                 break;
                             default:
                                 # code...
@@ -172,6 +183,27 @@ class Buku_besar extends CI_Controller
                                 //     $custorSupp = Suppliers_model_eloquent::find($supplier_id)->supplier_name;
                                 // }
 
+                                switch ($table_name) {
+                                    case 'fin_gl':
+                                        //$gl = GL_model_eloquent::find($id_refer);
+                                        //$no_bukti = $gl->fin_gl_no_bukti;
+
+                                        $id_refer_sub_1 = $dataHistoryCoa[$j]['id_refer_sub_1'];
+                                        $GL_deTail = Gl_detail_model_eloquent::find($id_refer_sub_1);
+                                        $references = $GL_deTail->fin_gl_referensi;
+
+                                        break;
+                                    case 'reimbursment':
+                                        $Reimburs = Reimbursment_model_eloquent::find($id_refer);
+                                        // $no_bukti = $gl->code;
+
+                                        $references = $Reimburs->name;
+                                        break;
+                                    default:
+                                        # code...
+                                        break;
+                                }
+
                                 $tempData[] = [
                                     'kunciJurnal' => $kunciJurnal,
                                     'no_bukti' => $no_bukti,
@@ -183,6 +215,7 @@ class Buku_besar extends CI_Controller
                                     'coa_saldo_id' => $dataHistoryCoa[$j]['fin_coa_saldo_id'],
                                     'date_trans' => $dataHistoryCoa[$j]['date_trans'],
                                     'custorSupp' => $custorSupp,
+                                    'references' => $references,
                                 ];
                                 $j++;
                             }
@@ -218,6 +251,7 @@ class Buku_besar extends CI_Controller
                             'coa_saldo_id' => $dataHistoryCoa[$j]['fin_coa_saldo_id'],
                             'date_trans' => $dataHistoryCoa[$j]['date_trans'],
                             'custorSupp' => $custorSupp,
+                            'references' => $references,
                         ];
                     }
                 }
@@ -255,9 +289,18 @@ class Buku_besar extends CI_Controller
 
         $fpdf->SetFont('Arial', 'B', 10);
         $fpdf->Cell(0, 10, 'Laporan Buku Besar', 0, 1, 'C', 0);
-        $fpdf->Cell(0, 10, 'Tanggal : ' . $date1 . ' sd ' . $date2, 0, 1, 'C', 0);
+        $fpdf->Cell(0, 10, 'Tanggal : ' . get_date($date1) . ' sd ' . get_date($date2), 0, 1, 'C', 0);
 
         for ($i = 0; $i < count($dataArray); $i++) {
+
+            if ($fpdf->GetY() > 200) { // need logic to page break
+                $fpdf->SetAutoPageBreak(false);
+                $fpdf->AddPage();
+                // $fpdf->SetMargins(10, 10, 10, 10);
+                $fpdf->hPosX = 10;
+                $this->hPosY = 5;
+            }
+
             $fpdf->SetFont('Arial', 'B', 10);
             $fpdf->Cell(20, 10, $dataArray[$i]['code'], 0, 0, 'l', 0);
             $fpdf->Cell(20, 10, $dataArray[$i]['name'], 0, 1, 'l', 0);
@@ -266,10 +309,10 @@ class Buku_besar extends CI_Controller
             $w_1 = 20;
             $w_2 = 40;
             $w_3 = 25;
-            $w_4 = 20;
-            $w_5 = 25;
-            $w_6 = 25;
-            $w_7 = 25;
+            $w_4 = 35;
+            $w_5 = 20;
+            $w_6 = 20;
+            $w_7 = 20;
             $h = 7;
             $fpdf->SetFillColor(255, 255, 255);
 
@@ -280,12 +323,13 @@ class Buku_besar extends CI_Controller
 
             $dataSub = $dataArray[$i]['data'];
             $fpdf->SetFont('Arial', 'B', 8);
-            $fpdf->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C'));
+            $fpdf->SetAligns(array('C', 'C'/*, 'C'*/, 'C', 'C', 'C', 'C'));
             $fpdf->Row(array(
                 'Date',
                 'Customer/Supplier',
                 'Code',
-                'No.Bukti',
+                // 'No.Bukti',
+                'Ket',
                 'Debit',
                 'Credit',
                 'Saldo Akhir'
@@ -294,10 +338,12 @@ class Buku_besar extends CI_Controller
             $fpdf->SetAligns(array('L', 'L', 'L', 'L', 'C', 'C', 'C'));
             for ($j = 0; $j < count($dataSub); $j++) {
                 $fpdf->Row(array(
-                    $dataSub[$j]['date_trans'],
+                    get_date($dataSub[$j]['date_trans']),
                     $dataSub[$j]['custorSupp'],
                     $dataSub[$j]['kunciJurnal'],
-                    $dataSub[$j]['no_bukti'],
+                    // $dataSub[$j]['no_bukti'],
+                    $dataSub[$j]['references'],
+
                     number($dataSub[$j]['debit']),
                     number($dataSub[$j]['credit']),
                     number(abs($dataSub[$j]['saldoAkhir'])),

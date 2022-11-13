@@ -27,13 +27,13 @@ class SiaRepository
     {
 
         try {
-            SIA::create($this->siaAr);
+            $create = SIA::create($this->siaAr);
         } catch (\Throwable $th) {
 
             return false;
         }
 
-        return true;
+        return $create->sia_id;
     }
 
     public function setCoaSaldo($debitCredit = true)
@@ -44,6 +44,7 @@ class SiaRepository
             return false;
         }
         $siaAr = $this->siaAr;
+        $sia_id = $insert;
 
         try {
             $dataCOA = CoaSaldo::where('fin_coa_id', $siaAr['fin_coa_id'])->first();
@@ -106,6 +107,11 @@ class SiaRepository
                 'type_value' => $type_value,
                 'date_trans' => $siaAr['date_trans'],
                 'created_by' => $siaAr['created_by'],
+                'id_refer_sub_1' => $siaAr['id_refer_sub_1'],
+                'table_name_sub_1' => $siaAr['table_name_sub_1'],
+                'id_refer_sub_2' => $siaAr['id_refer_sub_2'],
+                'table_name_sub_2' => $siaAr['table_name_sub_2'],
+                'sia_id' => $sia_id,
 
             ];
 

@@ -35,7 +35,11 @@ class GLRepository
                             $query->where($columns[$column]['name'], $value);
                         }
                     } else {
-                        if ($column != 3 && $column != 4) {
+                        // if ($column != 3 && $column != 4) {
+                        //     $query->where($columns[$column]['name'], 'like', '' . $value . '%');
+                        // }
+
+                        if ($column != 3) {
                             $query->where($columns[$column]['name'], 'like', '' . $value . '%');
                         }
                     }
@@ -54,13 +58,13 @@ class GLRepository
                     });
                 }
 
-                if ($column == 4) {
-                    $datas = $datas->whereHas('detail_taging_coa', function ($query) use ($value) {
-                        if (!empty($value)) {
-                            $query->where('fin_gl_detail.fin_gl_referensi', 'like', '%' . $value . '%');
-                        }
-                    });
-                }
+                // if ($column == 4) {
+                //     $datas = $datas->whereHas('detail_taging_coa', function ($query) use ($value) {
+                //         if (!empty($value)) {
+                //             $query->where('fin_gl_detail.fin_gl_referensi', 'like', '%' . $value . '%');
+                //         }
+                //     });
+                // }
             }
         }
 
@@ -114,7 +118,7 @@ class GLRepository
                     $dataRaw[$i]['fin_gl_code'],
                     $dataRaw[$i]['jurnal']['fin_jurnal_voucher_code'] . ' - ' . $dataRaw[$i]['jurnal']['fin_jurnal_voucher_name'],
                     $showCoa,
-                    $showReferensi,
+                    // $showReferensi,
                     // $dataRaw[$i]['fin_gl_no_bukti'],
                     $openLinkCode,
                     get_date($dataRaw[$i]['fin_gl_date']),
@@ -207,6 +211,10 @@ class GLRepository
                 'updated_by' => $this->CI->data['user']->id,
                 'supplier_id' => null,
                 'customer_id' => null,
+                'id_refer_sub_1' => $detail[$i]['fin_gl_detail_id'],
+                'table_name_sub_1' => 'fin_gl_detail',
+                'id_refer_sub_2' => null,
+                'table_name_sub_2' => null,
             ];
             $siaRepo = new SiaRepository($siaAr);
             $setCoaSaldo = $siaRepo->setCoaSaldo();
