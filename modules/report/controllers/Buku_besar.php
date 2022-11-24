@@ -195,7 +195,13 @@ class Buku_besar extends CI_Controller
 
                                         $id_refer_sub_1 = $dataHistoryCoa[$j]['id_refer_sub_1'];
                                         $GL_deTail = Gl_detail_model_eloquent::find($id_refer_sub_1);
-                                        $references = $GL_deTail->fin_gl_referensi;
+                                        if ($GL_deTail) {
+                                            $references = $GL_deTail->fin_gl_referensi;
+                                        }
+
+                                        // $id_refer_sub_1 = $dataHistoryCoa[$j]['id_refer_sub_1'];
+                                        // $GL_deTail = Gl_detail_model_eloquent::find($id_refer_sub_1);
+                                        // $references = $GL_deTail->fin_gl_referensi;
 
                                         break;
                                     case 'reimbursment':
