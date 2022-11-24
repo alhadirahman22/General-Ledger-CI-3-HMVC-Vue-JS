@@ -162,6 +162,10 @@ class GLRepository
 
                 $getData->detail()->createMany($detail);
 
+
+                // reload detail
+                $detail = $getData->detail()->get()->toArray();
+
                 $setToSia = $this->setToSia($dataToken, $detail);
                 if (!$setToSia) {
                     Capsule::rollback();

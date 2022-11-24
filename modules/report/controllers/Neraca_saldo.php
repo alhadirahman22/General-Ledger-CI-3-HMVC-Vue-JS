@@ -54,18 +54,14 @@ class Neraca_saldo extends CI_Controller
             'action' => $this->data['module_url'] . 'submit',
             'build' => $this->form_builder->build_form_horizontal($form),
             'class' => 'no-ajax',
+            'class_btn_submit' => 'btn btn-primary',
+            'class_btn_submit_text' => 'Submit'
         ];
 
         $this->data['data'] = [];
 
         $this->template->_init();
         $this->template->form();
-
-        $this->data['btn_submit'] = [
-            'class' => 'btn-primary',
-            'text' => 'Submit'
-
-        ];
 
         $this->data['headingOverwrite'] = 'Report Neraca Saldo';
         $this->load->view('default/form', $this->data);

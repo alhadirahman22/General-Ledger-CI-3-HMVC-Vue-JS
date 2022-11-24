@@ -50,11 +50,12 @@ class Buku_besar extends CI_Controller
             ),
         ];
 
-
         $this->data['form'] = [
             'action' => $this->data['module_url'] . 'submit',
             'build' => $this->form_builder->build_form_horizontal($form),
             'class' => 'no-ajax',
+            'class_btn_submit' => 'btn btn-primary',
+            'class_btn_submit_text' => 'Submit'
         ];
 
         $this->data['data'] = [];
@@ -62,11 +63,6 @@ class Buku_besar extends CI_Controller
         $this->template->_init();
         $this->template->form();
 
-        $this->data['btn_submit'] = [
-            'class' => 'btn-primary',
-            'text' => 'Submit'
-
-        ];
 
         $this->data['headingOverwrite'] = 'Report Buku Besar';
         $this->load->view('default/form', $this->data);
@@ -193,7 +189,8 @@ class Buku_besar extends CI_Controller
                                         //$gl = GL_model_eloquent::find($id_refer);
                                         //$no_bukti = $gl->fin_gl_no_bukti;
 
-                                        $id_refer_sub_1 = $dataHistoryCoa[$j]['id_refer_sub_1'];
+                                        // $id_refer_sub_1 = $dataHistoryCoa[$j]['id_refer_sub_1'];
+                                        $id_refer_sub_1 = $dataSIA[$k]->id_refer_sub_1;
                                         $GL_deTail = Gl_detail_model_eloquent::find($id_refer_sub_1);
                                         if ($GL_deTail) {
                                             $references = $GL_deTail->fin_gl_referensi;

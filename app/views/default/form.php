@@ -58,7 +58,7 @@
                     <a href="<?php echo $module_url; ?>" class="btn btn-purple"><?php echo lang('cancel_w_icon'); ?></a>
                   </div>
                   <div class="pull-right">
-                    <button type="submit" class="btn btn-success <?= (isset($form['class_btn_submit'])) ? $form['class_btn_submit'] : ''; ?>"><?php echo lang('save_w_icon'); ?></button>
+                    <button type="submit" class="<?= (isset($form['class_btn_submit'])) ? $form['class_btn_submit'] : 'btn btn-success'; ?>"><?= (isset($form['class_btn_submit_text'])) ? $form['class_btn_submit_text'] : lang('save_w_icon'); ?></button>
                   </div>
                 </div>
               </div>
